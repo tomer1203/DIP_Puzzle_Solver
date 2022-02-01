@@ -2,12 +2,14 @@ function straight_lines = detect_edges(RGB,num_of_pices)
 
 ImgGray = double(im2gray(RGB));
 img = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
-[seg_img,overlay,extent] = segmentation_tomer(img,3,0.5);
+BW=edge(img,"prewitt");
+filt_size = 3; extent_const = 0.5;
+dial = imdilate(BW,strel("rectangle",[filt_size,filt_size]));
+extent = bwpropfilt(dial, 'Extent', [0, extent_const]);
 
-% BW = edge(img,"log");
-figure
-imshowpair(img,extent,'montage')
-title("Edge detecting")
+% figure
+% imshowpair(img,extent,'montage')
+% title("Edge detecting")
 %%
 [H,T,R] = hough(extent);
 peaks = houghpeaks(H,num_of_pices*4);

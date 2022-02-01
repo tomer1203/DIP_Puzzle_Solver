@@ -26,10 +26,12 @@ function imgCell = cut_images(img,mask,N,padding)
         peaks = houghpeaks(H,N*4);
         lines = houghlines(BWedge,T,R,peaks);
         angles = [lines.theta]';
-
         % find the two average angles
-        [~,two_angles,~,~] = kmeans(angles,2);
-        
+        if (length(angles)== 1)% in case there is only one line
+            two_angles = [angles(1),angles(1)];
+        else
+            [~,two_angles,~,~] = kmeans(angles,2);
+        end
         % match to the closest angle
         a1 = mod(two_angles(1),90);
         if (a1>45)

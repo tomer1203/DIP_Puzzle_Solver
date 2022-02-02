@@ -2,7 +2,10 @@ function straight_lines = detect_edges(RGB,num_of_pices)
 
 ImgGray = double(im2gray(RGB));
 img = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
-BW=edge(img,"prewitt");
+BW = edge(img,"prewitt");
+figure
+imshow(BW)
+
 filt_size = 3; extent_const = 0.5;
 dial = imdilate(BW,strel("rectangle",[filt_size,filt_size]));
 extent = bwpropfilt(dial, 'Extent', [0, extent_const]);
@@ -12,7 +15,7 @@ extent = bwpropfilt(dial, 'Extent', [0, extent_const]);
 % title("Edge detecting")
 %%
 [H,T,R] = hough(extent);
-peaks = houghpeaks(H,num_of_pices*4);
+peaks = houghpeaks(H,num_of_pices*4,'Threshold',100);
 lines = houghlines(extent,T,R,peaks);
 % Filter the horizontal and vertical lines
 theta_values = abs([lines.theta]);

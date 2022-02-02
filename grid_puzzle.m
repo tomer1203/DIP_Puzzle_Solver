@@ -2,7 +2,14 @@ function img_grid = grid_puzzle(RGB,num_of_pices)
 % Detect straight lines
 straight_lines = detect_edges(RGB,num_of_pices);
 
-% Find corners and cutting the image
+% ImgGray = double(im2gray(RGB));
+% img = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
+% corners = detectHarrisFeatures(img);
+% 
+% imshow(RGB); hold on;
+% plot(corners.selectStrongest(200));
+
+%% Find corners and cutting the image
 point1 = [straight_lines.point1];
 point2 = [straight_lines.point2];
 rows = zeros(length(point1),1);

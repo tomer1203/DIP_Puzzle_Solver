@@ -2,15 +2,22 @@ clc;
 clear;
 close all;
 
-num_of_pieces = 6;
-num_row = 2;
-num_col = 3;
-RGB = imread("img\pzl_6_4.jpg");
-RGB_grid = imread("img\pzl_24_5.jpg");
+num_of_pieces = 12;
+num_row = 3;
+num_col = 4;
+RGB = imread("img\pzl_12_p2.jpg");
+
+ImgGray = double(im2gray(RGB));
+I = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
+% I2 = imadjust(I);
+% figure
+% montage({I,I2,RGB})
+RGB_grid = imread("img\pzl_12_p1.jpg");
+% RGB_grid = imsharpen(RGB_grid);
 img_grid = grid_puzzle(RGB_grid,num_of_pieces);
 
 %% Take the piece
-[seg_img,overlay,extent] = segmentation_tomer(RGB,5,0.3); 
+[seg_img,puz_edges] = segmentation(I,2,5,0.3,60);
 figure
 imshow(seg_img);
 % filt_size = 5, extent_const = 0.3

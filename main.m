@@ -3,7 +3,7 @@ clear;
 
 %% initialize camera 
 
-cam = webcam(2) % camera on
+cam = webcam(2); % camera on
 preview(cam); % show camera output
 %closePreview(cam); 
 
@@ -12,7 +12,7 @@ num_of_pieces = 6;
 
 %% pre prossing
 
-f = msgbox('pleas wiat a few seconds');
+f = msgbox('please wait a few seconds');
 img_for_segmentation = snapshot(cam); %RGB
 noise = noise_val(cam); % it's take 1sec. 
 % segmentation
@@ -23,21 +23,21 @@ delete(f);
 %% real time
 while(1)
     
-f = msgbox('choose pazzel piece');
+f = msgbox('Choose puzzle piece');
 tach_point = found_tach_point2(cam,noise);
 % take tach_point and return the choosen piece.
 % take choosen piece and return it place.
 delete(f);
 
-f = msgbox('take out the choosen piece');
+f = msgbox('Take out the choosen piece');
 % check movement and wait few seconds.
 num_of_pieces = num_of_pieces -1;
 delete(f);
 
-if(num_of_pieces == 0) break; end;
+if(num_of_pieces == 0) break; end
     
 % pre prossing again
-f = msgbox('pleas wiat a few seconds');
+f = msgbox('Please wait a few seconds');
 img_for_segmentation = snapshot(cam); %RGB
 noise = noise_val(cam); % it's take 1sec. 
 % segmentation
@@ -45,6 +45,6 @@ noise = noise_val(cam); % it's take 1sec.
 delete(f);
 end
 
-f = msgbox('The job done');
+f = msgbox('The job is done');
 pause(5)
 delete(f);

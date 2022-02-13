@@ -48,7 +48,7 @@ imshow(piece);
 [location,reliability] = matching_features(piece,img_grid,num_row,num_col);
 
 fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
-    ,i,location(1),location(2),reliability);
+    ,1,location(1),location(2),reliability);
 
 delete(f);
 

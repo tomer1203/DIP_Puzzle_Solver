@@ -28,7 +28,7 @@ if( different > noise*2 )
         else flag = 1; end;
     else flag = 0; count =0; end;
     
-    if(count > 3) break; end;
+    if(count > 1) break; end;
     
     mooving_pixel = (mooving_pixel>0.05);
     summ = summ + mooving_pixel;
@@ -52,7 +52,7 @@ summ = summ>0;
 % imshow(summ);
 
 [m, n] = size(summ);
-tresh = 25;
+tresh = 26; %25
 side(1) = sum(summ(tresh,:)); %up
 side(2) = sum(summ(m-tresh,:)); %douwn
 side(3) = sum(summ(:,tresh)); %left

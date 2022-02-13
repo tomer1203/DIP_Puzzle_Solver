@@ -7,12 +7,12 @@ num_of_imgs = 1;
 flag = 0;
 start_img = snapshot(cam);
 start_img = double(rgb2gray(start_img))/255;
-
+noise = noise_val(cam);
 pause(0.1)
 while(1)
 finger_in_img = snapshot(cam);
 finger_in_img = double(rgb2gray(finger_in_img))/255;
-different = sum(abs(finger_in_img - start_img),'all');
+different = sum(abs(abs(finger_in_img - start_img)),'all');
 if( different > noise*1.5 )
     new_img = finger_in_img;
     while(1)

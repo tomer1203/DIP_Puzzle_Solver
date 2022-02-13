@@ -14,7 +14,8 @@ I = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
 % montage({I,I2,RGB})
 RGB_grid = imread("img\pzl_12_p1.jpg");
 % RGB_grid = imsharpen(RGB_grid);
-img_grid = grid_puzzle(RGB_grid,num_of_pieces);
+% img_grid = grid_puzzle(RGB_grid,num_of_pieces);
+img_grid = imread("img\pzl_12_p3.jpg");
 
 %% Take the piece
 [seg_img,puz_edges] = segmentation(I,2,5,0.3,60);

@@ -13,11 +13,12 @@ while(1)
 finger_in_img = snapshot(cam);
 finger_in_img = double(rgb2gray(finger_in_img))/255;
 different = sum(abs(abs(finger_in_img - start_img)),'all');
-if( different > noise*1.5 )
+if( different > noise*2 )
     new_img = finger_in_img;
     while(1)
     num_of_imgs = num_of_imgs + 1;
     old_img = new_img;
+    pause(0.1)
     new_img = snapshot(cam);
     new_img = double(rgb2gray(new_img))/255;
     mooving_pixel = abs(new_img - old_img);
@@ -27,7 +28,7 @@ if( different > noise*1.5 )
         else flag = 1; end;
     else flag = 0; count =0; end;
     
-    if(count > 4) break; end;
+    if(count > 3) break; end;
     
     mooving_pixel = (mooving_pixel>0.05);
     summ = summ + mooving_pixel;
@@ -100,14 +101,15 @@ end
 
 
 
-figure()
-img = start_img;
-imshow(img);
-hold on;
-theta = 0 : 0.01 : 2*pi;
-radius = 50;
-x = radius * cos(theta) + tach_point(2);
-y = radius * sin(theta) + tach_point(1);
-plot(x, y, 'r-', 'LineWidth', 3);
+
+% figure()
+% img = start_img;
+% imshow(img);
+% hold on;
+% theta = 0 : 0.01 : 2*pi;
+% radius = 50;
+% x = radius * cos(theta) + tach_point(2);
+% y = radius * sin(theta) + tach_point(1);
+% plot(x, y, 'r-', 'LineWidth', 3);
 
 end

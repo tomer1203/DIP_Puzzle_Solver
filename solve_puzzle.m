@@ -9,6 +9,7 @@ function solve_puzzle(num_of_pieces,num_row,num_col,cam)
 % while(start_ditection == 0)
 %     % nothing
 % end
+global flag_stop
 
 %% pre prossing
 
@@ -40,7 +41,7 @@ delete(f);
 
 
 %% real time
-while(1)
+while(~flag_stop)
 close all    
 f = msgbox('Choose puzzle piece');
 tach_point = found_tach_point2(cam,noise);

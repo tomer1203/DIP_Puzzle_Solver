@@ -1,8 +1,7 @@
 function centroids = center_of_mass(seg_img,filter_size,tach_point)
 seg_img = seg_img >0;
-seg_img = medfilt2(seg_img ,filter_size);
-seg_img = seg_img >0;
-
+% seg_img = medfilt2(seg_img ,filter_size);
+% seg_img = seg_img >0;
 s = regionprops(seg_img,'centroid');
 centroids_s = cat(1,s.Centroid);
 

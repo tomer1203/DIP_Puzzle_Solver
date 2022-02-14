@@ -8,14 +8,12 @@ function [seg_img,puz_edges] = segmentation(img,dialtion_size1,dialation_size2,e
     % instead of using edges we use image gradients since they are more
     % consistent 
     BW= imgradient(img)>0.2;
-
     % increase size of lines so that all the edge lines will get consistent
     dial = imdilate(BW,strel("rectangle",[dialtion_size1,dialtion_size1]));
 
     % filter out the edges according to their extent. this removes most of
     % the noise
     extent = bwpropfilt(dial, 'Extent', [0, extent_filter]);
-
     % another final dilation to hopefully close all puzzle lines
     puz_edges = imdilate(extent,strel("rectangle",[dialation_size2,dialation_size2]));
 
@@ -24,6 +22,7 @@ function [seg_img,puz_edges] = segmentation(img,dialtion_size1,dialation_size2,e
     % possible to add erosion here
     % mask = imerode(mask,strel("rectangle",[10,10]));
     
+
     % this part cuts off glued pieces.
     distTrans = -bwdist(~mask);
     extended_dist = imextendedmin(distTrans,center_size);

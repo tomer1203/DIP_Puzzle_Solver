@@ -1,7 +1,7 @@
-function solve_puzzle(num_of_pieces,num_row,num_col)
+function solve_puzzle(num_of_pieces,num_row,num_col,cam)
 %% initialize camera 
 % start_ditection = 0;
-cam = webcam(2); % camera on
+%cam = webcam(2); % camera on
 % preview(cam); % show camera output
 %closePreview(cam); 
 

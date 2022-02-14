@@ -7,7 +7,12 @@ function solve_puzzle(num_of_pieces,num_row,num_col,cam,app)
 
 %% global vals
 global flag_stop
-
+%% camera adjustments
+% cam.Brightness = 120;
+% cam.Focus      = 0;
+% cam.Contrast = 31;
+% cam.Exposure = -4;
+% cam.Resolution='1920x1080';
 %% pre prossing
 msg = ['please wait a few seconds'];
 f = uiprogressdlg(app.UIFigure,'Title','Proccesing','Message',msg,'Indeterminate','on');
@@ -20,24 +25,27 @@ img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGra
 built_puzzle_img = imread("img\pzl_12_p1.jpg"); %RGB_grid
 % img_grid = grid_puzzle(built_puzzle_img,num_of_pieces);
 img_grid = imread(app.img);
-[seg_img,puz_edges] = segmentation(img_for_segmentation,2,5,0.5,60);
+[seg_img,puz_edges] = segmentation(img_for_segmentation,1,1,0.7,20);
+figure()
+imshow(seg_img);
 
 % filt_size = 5, extent_const = 0.3
-imgCell = cut_images(img_for_segmentation,seg_img,4,10);
-
-for i = 1:1
-    piece = imgCell{i};
-    figure
-    imshow(piece);
-    [location,reliability] = matching_features(piece,img_grid,num_row,num_col);
-    
-    fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
-        ,i,location(1),location(2),reliability);
-end
+% imgCell = cut_images(img_for_segmentation,seg_img,12,10);
+% % 
+% for i = 1:12
+%     piece = imgCell{i};
+%     piece = imresize(piece,5);
+%     figure
+%     imshow(piece);
+%     [location,reliability] = matching_features(piece,img_grid,num_row,num_col);
+%     
+%     fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
+%         ,i,location(1),location(2),reliability);
+% end
 % delete(f);
 close(f);
 
-
+i = 1;
 %% real time
 while(~flag_stop)
     close all    
@@ -70,6 +78,8 @@ while(~flag_stop)
 %     delete(f);
 %     close(f);
     
+
+    img_cut = imresize(img_cut,5);
     [location,reliability] = matching_features(img_cut,img_grid,num_row,num_col);
     
     fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
@@ -94,7 +104,7 @@ while(~flag_stop)
     img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
     
 
-    [seg_img,puz_edges] = segmentation(img_for_segmentation,1,1,0.5,60);
+    [seg_img,puz_edges] = segmentation(img_for_segmentation,1,1,0.7,20);
 
     
     
@@ -102,7 +112,7 @@ while(~flag_stop)
     % segmentation
     % fiture detection
     %delete(f);
-
+    i = i+1;
 end
 
     

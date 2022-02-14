@@ -1,4 +1,4 @@
-function solve_puzzle(num_of_pieces,num_row,num_col,cam,fig)
+function solve_puzzle(num_of_pieces,num_row,num_col,cam,app)
 %% initialize camera 
 % start_ditection = 0;
 %cam = webcam(2); % camera on
@@ -10,9 +10,7 @@ global flag_stop
 
 %% pre prossing
 msg = ['please wait a few seconds'];
-% f = uiconfirm(fig,msg,'Proccesing','Icon','info');
-f = uiprogressdlg(fig,'Title','Proccesing','Message',msg,'Indeterminate','on');
-% f = msgbox('please wait a few seconds');
+f = uiprogressdlg(app.UIFigure,'Title','Proccesing','Message',msg,'Indeterminate','on');
 noise = noise_val(cam); % it's take 1sec.
 
 img_for_segmentation = snapshot(cam); %RGB
@@ -20,7 +18,7 @@ ImgGray = double(rgb2gray(img_for_segmentation));
 img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
 
 built_puzzle_img = imread("img\pzl_12_p1.jpg"); %RGB_grid
-%img_grid = grid_puzzle(built_puzzle_img,num_of_pieces);
+% img_grid = grid_puzzle(built_puzzle_img,num_of_pieces);
 img_grid = imread("img\pzl_12_p3.jpg");
 [seg_img,puz_edges] = segmentation(img_for_segmentation,2,5,0.5,60);
 
@@ -44,7 +42,8 @@ close(f);
 while(~flag_stop)
     close all    
 
-    f = msgbox('Choose puzzle piece');
+    app.Label.Text = 'Choose puzzle piece';
+    app.Label.Visible = 'on';
 %     f = uiconfirm(fig,'Choose puzzle piece','Proccesing','Icon','info');
     tach_point = found_tach_point2(cam,noise);
     centroids = center_of_mass(seg_img,[11,11],tach_point);
@@ -67,20 +66,23 @@ while(~flag_stop)
     mask_cut = temp(r_low:r_high,c_low:c_high);
     figure;
     imshow(mask_cut);
-    delete(f);
+    app.Label.Visible = 'off';
+%     delete(f);
 %     close(f);
     
     [location,reliability] = matching_features(img_cut,img_grid,num_row,num_col);
     
     fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
-        ,i,location(1),location(2),reliability);
-    
-    %f = msgbox('Take out the choosen piece');
-    f = uiconfirm(fig,'Take out the choosen piece','Proccesing','Icon','info');
+        ,i,location(1),location(2),reliability);    
+%     f = msgbox('Take out the choosen piece');
+    textLabel = sprintf("The location for the piece is (%d,%d). Take out " + ...
+        "the choosen piece",location(1),location(2));
+    app.Label.Text = textLabel;
+    app.Label.Visible = 'on';
     take_peice_out(cam,noise);
     close all;
     num_of_pieces = num_of_pieces -1;
-    %delete(f);
+%     delete(f);
 
     
     if(num_of_pieces == 0) break; end

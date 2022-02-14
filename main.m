@@ -52,7 +52,7 @@ delete(f);
 
 f = msgbox('Take out the choosen piece');
 
-pause(10)
+take_peice_out(cam,noise)
 close all;
 num_of_pieces = num_of_pieces -1;
 delete(f);

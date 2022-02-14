@@ -11,7 +11,7 @@ global flag_stop
 %% pre prossing
 msg = ['please wait a few seconds'];
 % f = uiconfirm(fig,msg,'Proccesing','Icon','info');
-f = uiprogressdlg(fig,'Title','Proccesing','Message',msg);
+f = uiprogressdlg(fig,'Title','Proccesing','Message',msg,'Indeterminate','on');
 % f = msgbox('please wait a few seconds');
 noise = noise_val(cam); % it's take 1sec.
 
@@ -44,8 +44,8 @@ close(f);
 while(~flag_stop)
     close all    
 
-    %f = msgbox('Choose puzzle piece');
-    f = uiconfirm(fig,'Choose puzzle piece','Proccesing','Icon','info');
+    f = msgbox('Choose puzzle piece');
+%     f = uiconfirm(fig,'Choose puzzle piece','Proccesing','Icon','info');
     tach_point = found_tach_point2(cam,noise);
     centroids = center_of_mass(seg_img,[11,11],tach_point);
     labled = bwlabel(bwareafilt(logical(seg_img),[500,999999]));
@@ -68,6 +68,7 @@ while(~flag_stop)
     figure;
     imshow(mask_cut);
     delete(f);
+%     close(f);
     
     [location,reliability] = matching_features(img_cut,img_grid,num_row,num_col);
     

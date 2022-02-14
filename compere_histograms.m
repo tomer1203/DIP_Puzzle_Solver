@@ -23,17 +23,17 @@ B_piece=seperete_channle(piece1,3);
 [C1_R,n1_R]=imhist(R_piece);
 C1_R=C1_R/size(R_piece,1)/size(R_piece,2);
 C1_R=C1_R/(1-C1_R(1));
-C1_R(1)=0
+C1_R(1)=0;
 
 [C1_G,n1_G]=imhist(G_piece);
 C1_G=C1_G/size(G_piece,1)/size(G_piece,2);
 C1_G=C1_G/(1-C1_G(1));
-C1_G(1)=0
+C1_G(1)=0;
 
 [C1_B,n1_B]=imhist(B_piece);
 C1_B=C1_B/size(B_piece,1)/size(B_piece,2);
 C1_B=C1_B/(1-C1_B(1));
-C1_B(1)=0
+C1_B(1)=0;
 
 %#####################################
 relability_mat = zeros(num_row,num_col);
@@ -74,6 +74,6 @@ y_end   =k*col_factor;
 temp_img=RGB(x_start:x_end,y_start:y_end,:);
 multi={temp_img,piece1,RGB};
 figure;
-montage(multi)
+montage(multi);
 end
 

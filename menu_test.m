@@ -30,9 +30,14 @@ piece = imgCell{i};
 [location,reliability] = matching_features(piece,img_grid,num_row,num_col);
 fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
     ,i,location(1),location(2),reliability);
-[location_corr,reliability_corr] = correlation(piece,RGB_grid,num_row,num_col);      %add by royi
-fprintf("CORRELATION\n")
+% [location_corr,reliability_corr] = correlation(piece,img_grid,num_row,num_col);      %add by royi
+% fprintf("CORRELATION\n")
+% fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...             %add by royi
+%     ,i,location_corr(1),location_corr(2),reliability_corr);                          %add by royi
+
+[location_hists,reliability_hists] = compere_histograms(piece,img_grid,num_row,num_col);      %add by royi
+fprintf("compere using histograms\n")
 fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...             %add by royi
-    ,i,location_corr(1),location_corr(2),reliability_corr);                          %add by royi
+    ,i,location_hists(1),location_hists(2),reliability_hists);                          %add by royi
 
 end

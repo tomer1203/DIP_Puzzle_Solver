@@ -27,8 +27,8 @@ extent = bwpropfilt(dial, 'Extent', [0, extent_filter]);
 dial = imdilate(extent,strel("rectangle",[dialtion_size2,dialtion_size2]));%**
 % imshow(dial)
 mask = imfill(double(dial),8,"holes");
-% imshow(mask)
-
+BW = edge(mask,'sobel',0.01,'both','thinning');
+% imshow(mask
 %% find centers:
 %center of mass:
 props = regionprops(true(size(mask)), mask, 'WeightedCentroid');
@@ -66,7 +66,7 @@ minQuality1=minQuality;
 minQuality2=minQuality;
 minQuality3=minQuality;
 minQuality4=minQuality;
-
+%%
 while(size(Q1,1)>1)
 minQuality1=minQuality1+fuctor ;
 
@@ -75,11 +75,13 @@ if(minQuality1>1)
 end
 Q1=detectHarrisFeatures(BW,'MinQuality',minQuality1,"FilterSize",filterSize,"ROI",roi_1);    
 end
+%#
 if (size(Q1,1)==0)
     Q1=detectHarrisFeatures(BW,'MinQuality',0.01,"FilterSize",filterSize);   
     Q1.Location(1,1)=size(mask,2);
     Q1.Location(1,2)=1;
 end
+%#
 if (size(Q1,1)>1)
     y=[size(mask,2),1];
     dist=[];
@@ -91,7 +93,7 @@ if (size(Q1,1)>1)
     Q1.Location(2)= Q1.Location(find(dist==min(dist)),2);
 end
 
-
+%%
 while(size(Q2,1)>1)
 minQuality2=minQuality2+fuctor;  
 if(minQuality2>1)
@@ -100,11 +102,13 @@ end
   
 Q2=detectHarrisFeatures(BW,'MinQuality',minQuality2,"FilterSize",filterSize,"ROI",roi_2);    
 end
+%#
 if (size(Q2,1)==0)
     Q2=detectHarrisFeatures(BW,'MinQuality',0.01,"FilterSize",filterSize);   
     Q2.Location(1,1)=1;
     Q2.Location(1,2)=1;
 end
+%#
 if (size(Q2,1)>1)
     y=[1,1];
     dist=[];
@@ -115,7 +119,7 @@ if (size(Q2,1)>1)
     Q2.Location(1)= Q2.Location(find(dist==min(dist)),1);
     Q2.Location(2)= Q2.Location(find(dist==min(dist)),2);
 end
-
+%% 
 while(size(Q3,1)>1 )
 minQuality3=minQuality3+fuctor ;  
 if(minQuality3>1)
@@ -124,13 +128,14 @@ end
 
 Q3=detectHarrisFeatures(BW,'MinQuality',minQuality3,"FilterSize",filterSize,"ROI",roi_3);    
 end
-
+%#
 if (size(Q3,1)==0)
     
     Q3=detectHarrisFeatures(BW,'MinQuality',0.01,"FilterSize",filterSize);   
     Q3.Location(1,1)=1;
     Q3.Location(1,2)=size(mask,1);
 end
+%#
 if (size(Q3,1)>1)
     y=[1,size(mask,1)];
     dist=[];
@@ -143,7 +148,7 @@ if (size(Q3,1)>1)
 end
 
 
-
+%%
 while(size(Q4,1)>1)
 minQuality4=minQuality4+fuctor   ;
 if(minQuality4>1)
@@ -152,11 +157,13 @@ end
  
 Q4=detectHarrisFeatures(BW,'MinQuality',minQuality4,"FilterSize",filterSize,"ROI",roi_4);    
 end
+%#
 if (size(Q4,1)==0)
     Q4=detectHarrisFeatures(BW,'MinQuality',0.01,"FilterSize",filterSize);   
     Q4.Location(1,1)=size(mask,2);
     Q4.Location(1,2)=size(mask,1);
 end
+%#
 if (size(Q4,1)>1)
     y=[size(mask,2),size(mask,1)];
     dist=[];

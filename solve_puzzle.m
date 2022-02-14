@@ -1,4 +1,4 @@
-function solve_puzzle(num_of_pieces,num_row,num_col,cam)
+function solve_puzzle(num_of_pieces,num_row,num_col,cam,fig)
 %% initialize camera 
 % start_ditection = 0;
 %cam = webcam(2); % camera on
@@ -6,14 +6,13 @@ function solve_puzzle(num_of_pieces,num_row,num_col,cam)
 %closePreview(cam); 
 
 %% global vals
-% while(start_ditection == 0)
-%     % nothing
-% end
 global flag_stop
 
 %% pre prossing
-
-f = msgbox('please wait a few seconds');
+msg = ['please wait a few seconds'];
+% f = uiconfirm(fig,msg,'Proccesing','Icon','info');
+f = uiprogressdlg(fig,'Title','Proccesing','Message',msg);
+% f = msgbox('please wait a few seconds');
 noise = noise_val(cam); % it's take 1sec.
 
 img_for_segmentation = snapshot(cam); %RGB
@@ -29,51 +28,57 @@ img_grid = imread("img\pzl_12_p3.jpg");
 imgCell = cut_images(img_for_segmentation,seg_img,4,10);
 
 for i = 1:4
-piece = imgCell{i};
-figure
-imshow(piece);
-[location,reliability] = matching_features(piece,img_grid,num_row,num_col);
-
-fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
-    ,i,location(1),location(2),reliability);
+    piece = imgCell{i};
+    figure
+    imshow(piece);
+    [location,reliability] = matching_features(piece,img_grid,num_row,num_col);
+    
+    fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
+        ,i,location(1),location(2),reliability);
 end
-delete(f);
+% delete(f);
+close(f);
 
 
 %% real time
 while(~flag_stop)
-close all    
-f = msgbox('Choose puzzle piece');
-tach_point = found_tach_point2(cam,noise);
-centroids = center_of_mass(seg_img,[11,11],tach_point);
-delete(f);
-
-f = msgbox('Take out the choosen piece');
-
-pause(10)
-close all;
-num_of_pieces = num_of_pieces -1;
-delete(f);
-
-if(num_of_pieces == 0) break; end
+    close all    
+%     f = msgbox('Choose puzzle piece');
+    f = uiconfirm(fig,'Choose puzzle piece','Proccesing','Icon','info');
+    tach_point = found_tach_point2(cam,noise);
+    centroids = center_of_mass(seg_img,[11,11],tach_point);
+    close(f);
+    % delete(f)
     
-% pre prossing again
-%f = msgbox('Please wait a few seconds');
-img_for_segmentation = snapshot(cam); %RGB
-ImgGray = double(rgb2gray(img_for_segmentation));
-img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
-
-[seg_img,puz_edges] = segmentation(img_for_segmentation,1,1,0.5,60);
-
-
-noise = noise_val(cam); % it's take 1sec. 
-% segmentation
-% fiture detection
-%delete(f);
+%     f = msgbox('Take out the choosen piece');
+    f = uiconfirm(fig,'Take out the choosen piece','Proccesing','Icon','info');
+    
+    pause(10)
+    close all;
+    num_of_pieces = num_of_pieces -1;
+%     close(f);
+% delete(f)
+    
+    if(num_of_pieces == 0) break; end
+        
+    % pre prossing again
+    %f = msgbox('Please wait a few seconds');
+    img_for_segmentation = snapshot(cam); %RGB
+    ImgGray = double(rgb2gray(img_for_segmentation));
+    img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
+    
+    [seg_img,puz_edges] = segmentation(img_for_segmentation,1,1,0.5,60);
+    
+    
+    noise = noise_val(cam); % it's take 1sec. 
+    % segmentation
+    % fiture detection
+    %delete(f);
 end
 
-f = msgbox('The job is done');
-pause(5)
-delete(f);
+% f = msgbox('The job is done');
+% pause(5)
+% delete(f);
+uialert(app.UIFigure,msg,'The job is done','Icon','success');
 
 end

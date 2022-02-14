@@ -8,7 +8,7 @@ dialtion_size1=2;
 dialtion_size2=3;
 minQuality=0.1;
 filterSize=9;
-fuctor=0.06;
+fuctor=0.04;
 
 
 %#################################

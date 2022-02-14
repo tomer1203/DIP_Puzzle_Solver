@@ -19,7 +19,7 @@ img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGra
 
 built_puzzle_img = imread("img\pzl_12_p1.jpg"); %RGB_grid
 % img_grid = grid_puzzle(built_puzzle_img,num_of_pieces);
-img_grid = imread("img\pzl_12_p3.jpg");
+img_grid = imread(app.img);
 [seg_img,puz_edges] = segmentation(img_for_segmentation,2,5,0.5,60);
 
 % filt_size = 5, extent_const = 0.3

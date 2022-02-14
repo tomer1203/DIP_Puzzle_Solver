@@ -11,16 +11,16 @@
 
 function [location,reliability] = correlation(piece,RGB,num_row,num_col)
 % match the size of the piece to the refrence image
-[N,M,c]=size(RGB);
+[N,M,~]=size(RGB);
 row_factor=floor(N/num_row);
-col_factor=floor(N/num_col);
+col_factor=floor(M/num_col);
 
-piece=imresize(piece,[row_factor,col_factor]);
+piece1=imresize(piece,[row_factor,col_factor]);
 %seperte to channes:
-R_piece=seperete_channle(piece,1);
-G_piece=seperete_channle(piece,2);
-B_piece=seperete_channle(piece,3);
-% 
+R_piece=seperete_channle(piece1,1);
+G_piece=seperete_channle(piece1,2);
+B_piece=seperete_channle(piece1,3);
+%histogram of the first image 
 
 
 relability_mat = zeros(num_row,num_col);
@@ -37,6 +37,9 @@ for j = 1:num_row;
         B_temp=seperete_channle(temp_img,3);
         %compute the correletion
         relability_mat(j,k)=(corr2(R_temp,R_piece)+corr2(G_temp,G_piece)+corr2(B_temp,B_piece));
+        multi={temp_img,piece1};
+        montage(multi)
+        
     end
 end
 %return:

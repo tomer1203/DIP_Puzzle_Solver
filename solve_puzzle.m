@@ -26,7 +26,7 @@ img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGra
 img_grid = imread(appGui.img);
 [seg_img,~] = segmentation(img_for_segmentation,1,1,0.7,20);
 
-imshow(seg_img,'Parent',appGui.appSettings.UIAxes);
+imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
 
 % filt_size = 5, extent_const = 0.3
 % imgCell = cut_images(img_for_segmentation,seg_img,12,10);
@@ -52,7 +52,7 @@ while(~flag_stop)
     appGui.Label.Visible = 'on';
 %     f = uiconfirm(fig,'Choose puzzle piece','Proccesing','Icon','info');
     tuch_point = found_tach_point2(cam,noise);
-    centroids = center_of_mass(seg_img,[11,11],tuch_point);
+    centroids = center_of_mass(seg_img,[11,11],tuch_point,appGui);
     labled = bwlabel(bwareafilt(logical(seg_img),[500,999999]));
     label = labled(floor(centroids(2)),floor(centroids(1)));
     if (label == 0)
@@ -68,20 +68,24 @@ while(~flag_stop)
     c_low = max(min(c)-padding,1);
     c_high = min(max(c)+padding,size(temp,2));
     
-    img_cut=temp2(r_low:r_high,c_low:c_high,:);
-    mask_cut = temp(r_low:r_high,c_low:c_high);
-    figure;
-    imshow(mask_cut);
+    img_cut = temp2(r_low:r_high,c_low:c_high,:);
+%     mask_cut = temp(r_low:r_high,c_low:c_high);
+%     figure;
+%     imshow(mask_cut);
     appGui.Label.Visible = 'off';
 %     delete(f);
 %     close(f);
     
 
     img_cut = imresize(img_cut,5);
-    [location,reliability] = matching_features(img_cut,img_grid,num_row,num_col);
+    [location,reliability] = matching_features(img_cut,img_grid,num_row, ...
+        num_col,appGui);
     
     fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
-        ,i,location(1),location(2),reliability);    
+        ,i,location(1),location(2),reliability);
+    textPrint = sprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
+        ,i,location(1),location(2),reliability);
+    appGui.appSettings.CoordinateandRealibiltyLabel.Text = textPrint;
 %     f = msgbox('Take out the choosen piece');
     textLabel = sprintf("The location for the piece is (%d,%d). Take out " + ...
         "the choosen piece",location(1),location(2));
@@ -93,7 +97,7 @@ while(~flag_stop)
 %     delete(f);
 
     
-    if(num_of_pieces == 0) break; end
+    if(num_of_pieces == 0), break; end
         
     % pre prossing again
     %f = msgbox('Please wait a few seconds');
@@ -103,7 +107,7 @@ while(~flag_stop)
     
 
     [seg_img,~] = segmentation(img_for_segmentation,1,1,0.7,20);
-    imshow(seg_img,'Parent',appGui.appSettings.UIAxes);
+    imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
         
     noise = noise_val(cam); % it's take 1sec. 
     % segmentation

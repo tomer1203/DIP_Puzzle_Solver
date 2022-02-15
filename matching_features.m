@@ -1,4 +1,4 @@
-function [location,reliability] = matching_features(piece,img_grid,num_row,num_col)
+function [location,reliability] = matching_features(piece,img_grid,num_row,num_col,app)
 
 pieces = double(im2gray(piece));
 pieces = (pieces - min(pieces(:)))/(max(pieces(:)) - min(pieces(:)));
@@ -15,7 +15,8 @@ indexPairs = matchFeatures(f1,f2) ;
 matchedPoints1 = vpts1(indexPairs(:,1));
 matchedPoints2 = vpts2(indexPairs(:,2));
 
-figure; ax = axes;
+% figure; ax = axes;
+ax = app.appSettings.UIAxesFeatures;
   showMatchedFeatures(pieces,gray_grid,matchedPoints1,matchedPoints2,'montage','Parent',ax);
   title(ax, 'Candidate point matches');
   legend(ax, 'Matched points piece','Matched points grid');

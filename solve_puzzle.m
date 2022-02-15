@@ -1,4 +1,4 @@
-function solve_puzzle(num_of_pieces,num_row,num_col,cam,app)
+function solve_puzzle(num_of_pieces,num_row,num_col,cam,appGui)
 %% initialize camera 
 % start_ditection = 0;
 %cam = webcam(2); % camera on
@@ -15,19 +15,18 @@ global flag_stop
 % cam.Resolution='1920x1080';
 %% pre prossing
 msg = ['please wait a few seconds'];
-f = uiprogressdlg(app.UIFigure,'Title','Proccesing','Message',msg,'Indeterminate','on');
+f = uiprogressdlg(appGui.UIFigure,'Title','Proccesing','Message',msg,'Indeterminate','on');
 noise = noise_val(cam); % it's take 1sec.
 
 img_for_segmentation = snapshot(cam); %RGB
 ImgGray = double(rgb2gray(img_for_segmentation));
 img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
 
-built_puzzle_img = imread("img\pzl_12_p1.jpg"); %RGB_grid
 % img_grid = grid_puzzle(built_puzzle_img,num_of_pieces);
-img_grid = imread(app.img);
-[seg_img,puz_edges] = segmentation(img_for_segmentation,1,1,0.7,20);
-figure()
-imshow(seg_img);
+img_grid = imread(appGui.img);
+[seg_img,~] = segmentation(img_for_segmentation,1,1,0.7,20);
+
+imshow(seg_img,'Parent',appGui.appSettings.UIAxes);
 
 % filt_size = 5, extent_const = 0.3
 % imgCell = cut_images(img_for_segmentation,seg_img,12,10);
@@ -42,7 +41,6 @@ imshow(seg_img);
 %     fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
 %         ,i,location(1),location(2),reliability);
 % end
-% delete(f);
 close(f);
 
 i = 1;
@@ -50,11 +48,11 @@ i = 1;
 while(~flag_stop)
     close all    
 
-    app.Label.Text = 'Choose puzzle piece';
-    app.Label.Visible = 'on';
+    appGui.Label.Text = 'Choose puzzle piece';
+    appGui.Label.Visible = 'on';
 %     f = uiconfirm(fig,'Choose puzzle piece','Proccesing','Icon','info');
-    tach_point = found_tach_point2(cam,noise);
-    centroids = center_of_mass(seg_img,[11,11],tach_point);
+    tuch_point = found_tach_point2(cam,noise);
+    centroids = center_of_mass(seg_img,[11,11],tuch_point);
     labled = bwlabel(bwareafilt(logical(seg_img),[500,999999]));
     label = labled(floor(centroids(2)),floor(centroids(1)));
     if (label == 0)
@@ -74,7 +72,7 @@ while(~flag_stop)
     mask_cut = temp(r_low:r_high,c_low:c_high);
     figure;
     imshow(mask_cut);
-    app.Label.Visible = 'off';
+    appGui.Label.Visible = 'off';
 %     delete(f);
 %     close(f);
     
@@ -87,8 +85,8 @@ while(~flag_stop)
 %     f = msgbox('Take out the choosen piece');
     textLabel = sprintf("The location for the piece is (%d,%d). Take out " + ...
         "the choosen piece",location(1),location(2));
-    app.Label.Text = textLabel;
-    app.Label.Visible = 'on';
+    appGui.Label.Text = textLabel;
+    appGui.Label.Visible = 'on';
     take_peice_out(cam,noise);
     close all;
     num_of_pieces = num_of_pieces -1;
@@ -104,10 +102,9 @@ while(~flag_stop)
     img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
     
 
-    [seg_img,puz_edges] = segmentation(img_for_segmentation,1,1,0.7,20);
-
-    
-    
+    [seg_img,~] = segmentation(img_for_segmentation,1,1,0.7,20);
+    imshow(seg_img,'Parent',appGui.appSettings.UIAxes);
+        
     noise = noise_val(cam); % it's take 1sec. 
     % segmentation
     % fiture detection
@@ -119,7 +116,7 @@ end
     %f = msgbox('The job is done');
     %pause(5)
     %delete(f);
-    uialert(app.UIFigure,msg,'The job is done','Icon','success');
+    uialert(appGui.UIFigure,msg,'The job is done','Icon','success');
 
 
 end

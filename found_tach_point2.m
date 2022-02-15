@@ -51,7 +51,10 @@ div_size = filter_size(1)*filter_size(2);
 summ = summed_fil > 0.8;
 
 % summ = nlfilter(summ,filter_size,fun);
-
+figure;
+imshow(summed_fil);
+figure;
+imshow(summ);
 summ = medfilt2(summ,[5,5]);
 summ = summ>0;
 % figure()
@@ -70,6 +73,7 @@ maxx = max(side);
 if(side(1) == maxx)
     s = sum(summ(m-tresh,:));
     while (s < 20 && tresh<m)
+       disp(m-tresh);
        s = sum(summ(m-tresh,:)); 
        tresh = tresh+1;      
     end
@@ -80,6 +84,7 @@ end
 if(side(2) == maxx)
       s = sum(summ(tresh,:));
     while (s < 20 && tresh<m)
+       disp(tresh);
        s = sum(summ(tresh,:)); 
        tresh = tresh+1;       
     end

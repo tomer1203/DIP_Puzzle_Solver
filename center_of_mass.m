@@ -5,7 +5,7 @@ seg_img = seg_img >0;
 s = regionprops(seg_img,'centroid');
 centroids_s = cat(1,s.Centroid);
 
-vec = abs(centroids_s - [tuch_point(2),tuch_point(1)]);
+vec = abs((centroids_s - [tach_point(2),tach_point(1)]).^2);
 summ_vec = sum(vec,2); 
 minn = min(summ_vec);
 k = find(summ_vec == minn);

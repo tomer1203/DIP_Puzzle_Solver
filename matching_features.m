@@ -1,6 +1,6 @@
 function [location,reliability] = matching_features(piece,img_grid,num_row,num_col,app)
 %global value for features
-MetricThreshold=700;               %default 1000. decerase the tradhold- more features
+MetricThreshold=100;               %default 1000. decerase the tradhold- more features
 NumOctaves=4;                       %default 3 . recommend: 1-4 . increase the numOctuves- more features
 NumScaleLevels=6;                   %default 4. recommend  3-6 .increase the numScaleLevel- more features 
 roi=1;
@@ -15,11 +15,11 @@ gray_grid = (gray_grid - min(gray_grid(:)))/(max(gray_grid(:)) - min(gray_grid(:
 % Find and matching features
 points1 = detectSURFFeatures(pieces,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
 points2 = detectSURFFeatures(gray_grid,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
-[f1,vpts1] = extractFeatures(pieces,points1);
-[f2,vpts2] = extractFeatures(gray_grid,points2);
+[f1,vpts1] = extractFeatures(pieces,points1,"Method","SURF");
+[f2,vpts2] = extractFeatures(gray_grid,points2,"Method","SURF");
 
 
-indexPairs = matchFeatures(f1,f2,Unique=uniq);
+indexPairs = matchFeatures(f1,f2,Unique=uniq,MatchThreshold=100);
 matchedPoints1 = vpts1(indexPairs(:,1));
 matchedPoints2 = vpts2(indexPairs(:,2));
 
@@ -68,24 +68,25 @@ for j = 1:num_row
 %         disp(sum(y_range));
 %         disp(sum(x_range));
         features_piece(j,k) = f2p.Count;
-        if (f2p.Count<2)
-            orientation_diff_mat(j,k)= inf;
+        if (f2p.Count<=2)
+            orientation_diff_mat(j,k)= -1;
         else
             orientation_diff_mat(j,k) = std(orientation_diff);
         end
     end
 end
-normelized_matrix=sum(sum(features_piece));
-[maximum,index_tmp] = max(features_piece(:));
+orientation_diff_mat(orientation_diff_mat==-1) = max(max(orientation_diff_mat));
+normelized_matrix=sum(sum(features_piece./orientation_diff_mat));
+features_weights_mat = features_piece./sigmoid(orientation_diff_mat-0.2);
+[maximum,index_tmp] = max(features_weights_mat(:));
 disp(orientation_diff_mat);
 % Reliability calculation:
 % features ratio * (2/(1+e^(-x/3))-1), x = sum of features in image
-ratio_score = (maximum/matchedPoints2.Count);
+ratio_score = tanh(maximum/matchedPoints2.Count);
 count_score = (2/(1+exp(-matchedPoints2.Count/3))-1);
 % disp(ratio_score);
 % disp(count_score);
-reliability = (maximum/matchedPoints2.Count)*(2/(1+ ...
-    exp(-matchedPoints2.Count/3))-1);
+reliability = ratio_score*count_score;
 % ratio_score2=maximum/normelized_matrix;
 % count_score2 = (2/(1+exp(-matchedPoints2.Count/3))-1);
 % reliability = ratio_score2*count_score2;

@@ -24,20 +24,20 @@ img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGra
 
 % img_grid = grid_puzzle(built_puzzle_img,num_of_pieces);
 img_grid = imread(appGui.img);
-[seg_img,~] = segmentation(img_for_segmentation,1,1,0.7,10);
+[seg_img,~] = segmentation(img_for_segmentation,1,1,0.7,40);
 
-imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
+%imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
 
 
 % filt_size = 5, extent_const = 0.3
-% imgCell = cut_images(img_for_segmentation,seg_img,12,10);
-% 
-% for i = 1:12
+imgCell = cut_images(img_for_segmentation,seg_img,12,10);
+
+% for i = 1:10
 %     piece = imgCell{i};
 %     piece = imresize(piece,5);
 %     figure
 %     imshow(piece);
-%     [location,reliability] = matching_features(piece,img_grid,num_row,num_col);
+%     [location,reliability] = matching_features2(piece,img_grid,num_row,num_col,1);
 %     
 %     fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
 %         ,i,location(1),location(2),reliability);
@@ -52,7 +52,12 @@ while(~flag_stop)
     appGui.Label.Text = 'Choose puzzle piece';
     appGui.Label.Visible = 'on';
 %     f = uiconfirm(fig,'Choose puzzle piece','Proccesing','Icon','info');
+    tuch_point = 0;
     tuch_point = found_tach_point2(cam,noise);
+    while(tuch_point == 0)         
+         appGui.Label.Text = 'Choose puzzle piece again';
+         tuch_point = found_tach_point2(cam,noise);
+    end
     centroids = center_of_mass(seg_img,[11,11],tuch_point,appGui);
     labled = bwlabel(bwareafilt(logical(seg_img),[500,999999]));
     label = labled(floor(centroids(2)),floor(centroids(1)));
@@ -82,7 +87,7 @@ while(~flag_stop)
     
         img_cut = imresize(img_cut,5);
         img_cut(img_cut==0) = -1;
-        [location,reliability] = matching_features(img_cut,img_grid,num_row,num_col);
+        [location,reliability] = matching_features2(img_cut,img_grid,num_row,num_col,1);
         
         
         fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
@@ -110,8 +115,8 @@ while(~flag_stop)
     img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
     
 
-    [seg_img,~] = segmentation(img_for_segmentation,1,1,0.7,10);
-    imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
+    [seg_img,~] = segmentation(img_for_segmentation,1,1,0.7,40);
+    %imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
 
     noise = noise_val(cam); % it's take 1sec. 
     %delete(f);

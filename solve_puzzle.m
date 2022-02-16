@@ -37,7 +37,7 @@ imgCell = cut_images(img_for_segmentation,seg_img,12,10);
 %     piece = imresize(piece,5);
 %     figure
 %     imshow(piece);
-%     [location,reliability] = matching_features2(piece,img_grid,num_row,num_col,1);
+%     [location,reliability] = matching_features(piece,img_grid,num_row,num_col,1);
 %     
 %     fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
 %         ,i,location(1),location(2),reliability);
@@ -87,7 +87,7 @@ while(~flag_stop)
     
         img_cut = imresize(img_cut,5);
         img_cut(img_cut==0) = -1;
-        [location,reliability] = matching_features2(img_cut,img_grid,num_row,num_col,1);
+        [location,reliability] = matching_features(img_cut,img_grid,num_row,num_col,1);
         
         
         fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...

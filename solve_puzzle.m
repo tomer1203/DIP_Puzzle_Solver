@@ -18,8 +18,8 @@ msg = ['please wait a few seconds'];
 f = uiprogressdlg(appGui.UIFigure,'Title','Proccesing','Message',msg,'Indeterminate','on');
 noise = noise_val(cam); % it's take 1sec.
 
-img_for_segmentation = snapshot(cam); %RGB
-ImgGray = double(rgb2gray(img_for_segmentation));
+img_for_segmentation_rgb = snapshot(cam); %RGB
+ImgGray = double(rgb2gray(img_for_segmentation_rgb));
 img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
 
 % img_grid = grid_puzzle(built_puzzle_img,num_of_pieces);
@@ -30,18 +30,18 @@ img_grid = imread(appGui.img);
 
 
 % filt_size = 5, extent_const = 0.3
-imgCell = cut_images(img_for_segmentation,seg_img,12,10);
+imgCell = cut_images(img_for_segmentation_rgb,seg_img,12,10);
 
-% for i = 1:10
-%     piece = imgCell{i};
-%     piece = imresize(piece,5);
-%     figure
-%     imshow(piece);
-%     [location,reliability] = matching_features(piece,img_grid,num_row,num_col,1);
-%     
-%     fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
-%         ,i,location(1),location(2),reliability);
-% end
+for i = 1:10
+    piece = imgCell{i};
+    piece = imresize(piece,5);
+    figure
+    imshow(piece);
+    [location,reliability] = matching_features(piece,img_grid,num_row,num_col,1);
+    
+    fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
+        ,i,location(1),location(2),reliability);
+end
 close(f);
 
 i = 1;
@@ -110,8 +110,8 @@ while(~flag_stop)
         end
     end
     % preprocessing again
-    img_for_segmentation = snapshot(cam); %RGB
-    ImgGray = double(rgb2gray(img_for_segmentation));
+    img_for_segmentation_rgb = snapshot(cam); %RGB
+    ImgGray = double(rgb2gray(img_for_segmentation_rgb));
     img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
     
 

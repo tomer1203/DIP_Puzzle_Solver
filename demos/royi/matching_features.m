@@ -1,4 +1,4 @@
-function [location,reliability] = matching_features(piece,img_grid,num_row,num_col,app)
+function [location,reliability] = matching_features(piece,img_grid,num_row,num_col,show)
 %global value for features
 MetricThreshold=700;               %default 1000. decerase the tradhold- more features
 NumOctaves=4;                       %default 3 . recommend: 1-4 . increase the numOctuves- more features
@@ -21,12 +21,12 @@ points2 = detectSURFFeatures(gray_grid,"MetricThreshold",MetricThreshold,"NumOct
 indexPairs = matchFeatures(f1,f2,Unique=uniq) ;
 matchedPoints1 = vpts1(indexPairs(:,1));
 matchedPoints2 = vpts2(indexPairs(:,2));
-
-ax = app.appSettings.UIAxesFeatures;
+if (show)
+figure; ax = axes;
   showMatchedFeatures(pieces,gray_grid,matchedPoints1,matchedPoints2,'montage','Parent',ax);
   title(ax, 'Candidate point matches');
   legend(ax, 'Matched points piece','Matched points grid');
-
+end
   % Find numner of features in each piece
 [n,m,~] = size(img_grid);
 features_piece = zeros(num_row,num_col);

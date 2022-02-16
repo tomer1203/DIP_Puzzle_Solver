@@ -18,18 +18,26 @@ points2 = detectSURFFeatures(gray_grid,"MetricThreshold",MetricThreshold,"NumOct
 [f1,vpts1] = extractFeatures(pieces,points1);
 [f2,vpts2] = extractFeatures(gray_grid,points2);
 
-indexPairs = matchFeatures(f1,f2,Unique=uniq) ;
+
+indexPairs = matchFeatures(f1,f2,Unique=uniq);
 matchedPoints1 = vpts1(indexPairs(:,1));
 matchedPoints2 = vpts2(indexPairs(:,2));
 
-ax = app.appSettings.UIAxesFeatures;
-  showMatchedFeatures(pieces,gray_grid,matchedPoints1,matchedPoints2,'montage','Parent',ax);
-  title(ax, 'Candidate point matches');
-  legend(ax, 'Matched points piece','Matched points grid');
+% figure; ax = axes;
+if (app ~= 0)
+    ax = app.appSettings.UIAxesFeatures;
+else
+    fig = figure;
+    ax = axes(fig);
+end
+showMatchedFeatures(pieces,gray_grid,matchedPoints1,matchedPoints2,'montage','Parent',ax);
+title(ax, 'Candidate point matches');
+legend(ax, 'Matched points piece','Matched points grid');
 
   % Find numner of features in each piece
 [n,m,~] = size(img_grid);
 features_piece = zeros(num_row,num_col);
+orientation_diff_mat = zeros(num_row,num_col);
 y = [matchedPoints2.Location(:,1)]; %.*(num_row/n);
 x = [matchedPoints2.Location(:,2)]; %.*(num_col/m);
 mask=zeros(size(pieces));
@@ -51,13 +59,25 @@ for j = 1:num_row
 %         d = ((f2p.Location(:,1)-x_center_of_mass).^2+(f2p.Location(:,2)-y_center_of_mass).^2); %without sqrt - ^2
 %         d=1-d./(normelize);
 
+
+        f1p = matchedPoints1(x_range & y_range);
+%         f2p_orient = (f2p.Orientation>pi).*(f2p.Orientation-2*pi)+(f2p.Orientation<=pi).*(f2p.Orientation);
+%         f1p_orient = (f1p.Orientation>pi).*(f1p.Orientation-2*pi)+(f1p.Orientation<=pi).*(f1p.Orientation);
+%         orientation_diff = min(abs(f2p_orient-f1p_orient),abs(f1p_orient-f2p_orient));
+        orientation_diff = abs(atan2(sin(f2p.Orientation-f1p.Orientation), cos(f2p.Orientation-f1p.Orientation)));
 %         disp(sum(y_range));
 %         disp(sum(x_range));
-        features_piece(j,k) =f2p.Count   ;%  sum(d>0);
+        features_piece(j,k) = f2p.Count;
+        if (f2p.Count<2)
+            orientation_diff_mat(j,k)= inf;
+        else
+            orientation_diff_mat(j,k) = std(orientation_diff);
+        end
     end
 end
 normelized_matrix=sum(sum(features_piece));
 [maximum,index_tmp] = max(features_piece(:));
+disp(orientation_diff_mat);
 % Reliability calculation:
 % features ratio * (2/(1+e^(-x/3))-1), x = sum of features in image
 ratio_score = (maximum/matchedPoints2.Count);

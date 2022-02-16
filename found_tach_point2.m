@@ -1,5 +1,5 @@
-function tach_point = found_tach_point2(cam,noise)
-tach_point =0;
+function tuch_point = found_tach_point2(cam,noise)
+tuch_point =0;
 img = {};
 summ = 0;
 count = 0;
@@ -23,12 +23,13 @@ if( different > noise*2 )
     new_img = double(rgb2gray(new_img))/255;
     mooving_pixel = abs(new_img - old_img);
     mooving_pixel_sum = sum(mooving_pixel,'all');
-    if(mooving_pixel_sum<noise )
-        if(flag == 1) count = count +1; 
-        else flag = 1; end;
-    else flag = 0; count =0; end;
+    if(mooving_pixel_sum < noise)
+        if(flag == 1), count = count +1; 
+        else, flag = 1; end
+    else, flag = 0; count =0; 
+    end
     
-    if(count > 1) break; end;
+    if(count > 1), break; end
     
     mooving_pixel = (mooving_pixel>0.05);
     summ = summ + mooving_pixel;
@@ -50,7 +51,10 @@ div_size = filter_size(1)*filter_size(2);
 summ = summed_fil > 0.8;
 
 % summ = nlfilter(summ,filter_size,fun);
-
+figure;
+imshow(summed_fil);
+figure;
+imshow(summ);
 summ = medfilt2(summ,[5,5]);
 summ = summ>0;
 % figure()
@@ -69,21 +73,23 @@ maxx = max(side);
 if(side(1) == maxx)
     s = sum(summ(m-tresh,:));
     while (s < 20 && tresh<m)
+       disp(m-tresh);
        s = sum(summ(m-tresh,:)); 
        tresh = tresh+1;      
     end
     p = find(summ((m-tresh),:));
-    tach_point = [(m-tresh) , p(1)];
+    tuch_point = [(m-tresh) , p(1)];
 end
 
 if(side(2) == maxx)
       s = sum(summ(tresh,:));
     while (s < 20 && tresh<m)
+       disp(tresh);
        s = sum(summ(tresh,:)); 
        tresh = tresh+1;       
     end
     p = find(summ(tresh,:));
-    tach_point = [tresh , p(1)];
+    tuch_point = [tresh , p(1)];
 end
 
 if(side(3) == maxx)
@@ -93,7 +99,7 @@ if(side(3) == maxx)
        tresh = tresh+1;     
     end
     p = find(summ(:,n-tresh));
-    tach_point = [p(1) ,n-tresh];
+    tuch_point = [p(1) ,n-tresh];
 end
 
 if(side(4) == maxx)
@@ -103,7 +109,7 @@ if(side(4) == maxx)
        tresh = tresh+1;       
     end
     p = find(summ(:,tresh));
-    tach_point = [p(1) ,tresh];
+    tuch_point = [p(1) ,tresh];
 end
 
 

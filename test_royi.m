@@ -13,6 +13,7 @@ extent_filter=0.6;
 center_size=20;
 resize_factor=8;
 show=false;
+
 %noremelized and grayScale the images:
 
 gray_grid = double(im2gray(img_grid));

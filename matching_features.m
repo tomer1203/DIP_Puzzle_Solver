@@ -133,8 +133,12 @@ for j = 1:num_row
         orientation_diff = abs(atan2(sin(f2p.Orientation-f1p.Orientation), cos(f2p.Orientation-f1p.Orientation)));
 %         disp(sum(y_range));
 %         disp(sum(x_range));
+        strengths = log10((f2p.Metric/max_strength)+0.3)+0.89;
 
         features_piece(j,k) = f2p.Count;
+        features_piece2(j,k) = sum(strengths);
+
+
         if (f2p.Count<=2)
             orientation_diff_mat(j,k)= -1;
         else
@@ -146,12 +150,12 @@ orientation_diff_mat(orientation_diff_mat==-1) = max(max(orientation_diff_mat));
 
 % The chance that the peice is in location i,j
 features_weights_mat = features_piece./sigmoid(orientation_diff_mat-0.2);
-% features_weights_mat2 = features_piece2./sigmoid(orientation_diff_mat-1);
+features_weights_mat2 = features_piece2./sigmoid(orientation_diff_mat-1);
 % the sum 
 weights_sum=sum(sum(features_weights_mat));
-% weights_sum2=sum(sum(features_weights_mat2));
+weights_sum2=sum(sum(features_weights_mat2));
 [maximum,index_tmp] = max(features_weights_mat(:));
-% [maximum2,index_tmp] = max(features_weights_mat2(:));
+[maximum2,index_tmp2] = max(features_weights_mat2(:));
 % disp(orientation_diff_mat);
 orientation_diff_mat
 % features_piece
@@ -163,10 +167,14 @@ ratio_score = maximum/weights_sum;
 count_score = (2/(1+exp(-matchedPoints2.Count/3))-1);
 % disp(ratio_score);
 % disp(count_score);
-% ratio_score2=maximum2/weights_sum2;
+ratio_score2=maximum2/weights_sum2;
 reliability = ratio_score*count_score;
-% reliability2 = ratio_score2*count_score;
+reliability2 = ratio_score2*count_score;
+
+%to use strength matching
 % reliability = reliability2;
+% index_tmp = index_tmp2;
+
 % rel_mat = count_score*features_weights_mat/weights_sum
 % rel_mat2 = count_score*features_weights_mat2/weights_sum2
 % reliability

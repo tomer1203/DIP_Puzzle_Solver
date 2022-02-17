@@ -1,36 +1,82 @@
-function [location,reliability] = matching_features(piece,img_grid,num_row,num_col,app)
+function [location,reliability] = matching_features(piece,img_grid,num_row,num_col,points2_flag,app)
 %global value for features
 MetricThreshold=100;               %default 1000. decerase the tradhold- more features
 NumOctaves=4;                       %default 3 . recommend: 1-4 . increase the numOctuves- more features
 NumScaleLevels=6;                   %default 4. recommend  3-6 .increase the numScaleLevel- more features 
 roi=1;
 uniq=true;
+global points2
 
 
-pieces = double(im2gray(piece));
-pieces = (pieces - min(pieces(:)))/(max(pieces(:)) - min(pieces(:)));
-gray_grid = double(im2gray(img_grid));
-gray_grid = (gray_grid - min(gray_grid(:)))/(max(gray_grid(:)) - min(gray_grid(:)));
+% pieces = double(im2gray(piece));
+% pieces = (pieces - min(pieces(:)))/(max(pieces(:)) - min(pieces(:)));
+%gray_grid = double(im2gray(img_grid));
+%gray_grid = (gray_grid - min(gray_grid(:)))/(max(gray_grid(:)) - min(gray_grid(:)));
+
+gray_grid_4 = double(im2gray(img_grid));
+gray_grid_4 = (gray_grid_4 - min(gray_grid_4(:)))/(max(gray_grid_4(:)) - min(gray_grid_4(:)));
+if(points2_flag == 0)
+
+gray_grid_1 = double(img_grid(:,:,1));
+gray_grid_2 = double(img_grid(:,:,2));
+gray_grid_3 = double(img_grid(:,:,3));
+gray_grid_4 = double(im2gray(img_grid));
+
+gray_grid_1 = (gray_grid_1 - min(gray_grid_1(:)))/(max(gray_grid_1(:)) - min(gray_grid_1(:)));
+gray_grid_2 = (gray_grid_2 - min(gray_grid_2(:)))/(max(gray_grid_2(:)) - min(gray_grid_2(:)));
+gray_grid_3 = (gray_grid_3 - min(gray_grid_3(:)))/(max(gray_grid_3(:)) - min(gray_grid_3(:)));
+gray_grid_4 = (gray_grid_4 - min(gray_grid_4(:)))/(max(gray_grid_4(:)) - min(gray_grid_4(:)));
+
+points2_1 = detectSURFFeatures(gray_grid_1,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
+points2_2 = detectSURFFeatures(gray_grid_2,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
+points2_3 = detectSURFFeatures(gray_grid_3,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
+points2_4 = detectSURFFeatures(gray_grid_4,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
+
+points2 = [points2_1;points2_2;points2_3;points2_4];
+
+end
+
+
+
+piece_1 = double(piece(:,:,1));
+piece_2 = double(piece(:,:,2));
+piece_3 = double(piece(:,:,3));
+piece_4 =  double(im2gray(piece));
+
+piece_1 = (piece_1 - min(piece_1(:)))/(max(piece_1(:)) - min(piece_1(:)));
+piece_2 = (piece_2 - min(piece_2(:)))/(max(piece_2(:)) - min(piece_2(:)));
+piece_3 = (piece_3 - min(piece_3(:)))/(max(piece_3(:)) - min(piece_3(:)));
+piece_4 = (piece_4 - min(piece_4(:)))/(max(piece_4(:)) - min(piece_4(:)));
 
 % Find and matching features
-points1 = detectSURFFeatures(pieces,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
-points2 = detectSURFFeatures(gray_grid,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
-[f1,vpts1] = extractFeatures(pieces,points1,"Method","SURF");
-[f2,vpts2] = extractFeatures(gray_grid,points2,"Method","SURF");
+%points1 = detectSURFFeatures(pieces,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
+%points2 = detectSURFFeatures(gray_grid,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
+
+points1_1 = detectSURFFeatures(piece_1,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
+points1_2 = detectSURFFeatures(piece_2,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
+points1_3 = detectSURFFeatures(piece_3,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
+points1_4 = detectSURFFeatures(piece_4,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
+
+
+points1 = [points1_1;points1_2;points1_3;points1_4];
+
+
+[f1,vpts1] = extractFeatures(piece_4,points1,"Method","SURF");
+[f2,vpts2] = extractFeatures(gray_grid_4,points2,"Method","SURF");
 
 
 indexPairs = matchFeatures(f1,f2,Unique=uniq,MatchThreshold=100);
 matchedPoints1 = vpts1(indexPairs(:,1));
 matchedPoints2 = vpts2(indexPairs(:,2));
 
-% figure; ax = axes;
-if (app ~= 0)
-    ax = app.appSettings.UIAxesFeatures;
-else
-    fig = figure;
-    ax = axes(fig);
-end
-showMatchedFeatures(pieces,gray_grid,matchedPoints1,matchedPoints2,'montage','Parent',ax);
+figure; ax = axes;
+% if (app ~= 0)
+%     ax = app.appSettings.UIAxesFeatures;
+% else
+%     fig = figure;
+%     ax = axes(fig);
+% end
+showMatchedFeatures(piece_4,gray_grid_4,matchedPoints1,matchedPoints2,'montage','Parent',ax);
 title(ax, 'Candidate point matches');
 legend(ax, 'Matched points piece','Matched points grid');
 
@@ -40,8 +86,8 @@ features_piece = zeros(num_row,num_col);
 orientation_diff_mat = zeros(num_row,num_col);
 y = [matchedPoints2.Location(:,1)]; %.*(num_row/n);
 x = [matchedPoints2.Location(:,2)]; %.*(num_col/m);
-mask=zeros(size(pieces));
-mask(pieces>0)=1;
+mask=zeros(size(piece_4));
+mask(piece_4>0)=1;
 %% center of mass
 % props = regionprops(true(size(piece)), piece, 'WeightedCentroid');
 % x_center_of_mass=props.WeightedCentroid(1);

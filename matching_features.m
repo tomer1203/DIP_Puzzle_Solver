@@ -66,17 +66,11 @@ for j = 1:num_row
 
 
         f1p = matchedPoints1(x_range & y_range);
-%         f2p_orient = (f2p.Orientation>pi).*(f2p.Orientation-2*pi)+(f2p.Orientation<=pi).*(f2p.Orientation);
-%         f1p_orient = (f1p.Orientation>pi).*(f1p.Orientation-2*pi)+(f1p.Orientation<=pi).*(f1p.Orientation);
-%         orientation_diff = min(abs(f2p_orient-f1p_orient),abs(f1p_orient-f2p_orient));
         orientation_diff = abs(atan2(sin(f2p.Orientation-f1p.Orientation), cos(f2p.Orientation-f1p.Orientation)));
 %         disp(sum(y_range));
 %         disp(sum(x_range));
-        
-%         strengths = (2*f2p.Metric+3*max_strength)/(5*max_strength);
-%         strengths = log10((f2p.Metric/max_strength)+0.3)+0.89;
+
         features_piece(j,k) = f2p.Count;
-%         features_piece2(j,k) = sum(strengths);
         if (f2p.Count<=2)
             orientation_diff_mat(j,k)= -1;
         else

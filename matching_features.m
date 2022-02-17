@@ -37,7 +37,7 @@ points2 = [points2_1;points2_2;points2_3;points2_4];
 end
 
 
-
+piece = imsharpen(piece);
 piece_1 = double(piece(:,:,1));
 piece_2 = double(piece(:,:,2));
 piece_3 = double(piece(:,:,3));
@@ -68,6 +68,24 @@ points1 = [points1_1;points1_2;points1_3;points1_4];
 indexPairs = matchFeatures(f1,f2,Unique=uniq,MatchThreshold=100);
 matchedPoints1 = vpts1(indexPairs(:,1));
 matchedPoints2 = vpts2(indexPairs(:,2));
+
+
+figure; ax = axes;
+% if (app ~= 0)
+%     ax = app.appSettings.UIAxesFeatures;
+% else
+%     fig = figure;
+%     ax = axes(fig);
+% end
+showMatchedFeatures(piece_4,gray_grid_4,matchedPoints1,matchedPoints2,'montage','Parent',ax);
+title(ax, 'Candidate point matches');
+legend(ax, 'Matched points piece','Matched points grid');
+
+
+
+points_bin = clean_featurse(piece_4,matchedPoints1.Location);
+matchedPoints1 = matchedPoints1(points_bin);
+matchedPoints2 = matchedPoints2(points_bin);
 
 figure; ax = axes;
 % if (app ~= 0)

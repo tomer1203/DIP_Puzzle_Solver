@@ -14,7 +14,7 @@ while(1)
 finger_in_img = snapshot(cam);
 finger_in_img = double(rgb2gray(finger_in_img))/255;
 different = sum(abs(abs(finger_in_img - start_img)),'all');
-if( different > noise*2.5 )
+if( different > noise*2 )
     new_img = finger_in_img;
     while(1)
     num_of_imgs = num_of_imgs + 1;

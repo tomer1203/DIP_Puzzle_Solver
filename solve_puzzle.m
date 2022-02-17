@@ -7,9 +7,12 @@ function solve_puzzle(num_of_pieces,num_row,num_col,cam,appGui)
 
 %% global vals
 global flag_stop
+global points2
+points2 = 0;
+points2_flag = 0;
 %% camera adjustments
 % cam.Brightness = 120;
-% cam.Focus      = 0;
+ cam.FocusMode   = 'manual';
 % cam.Contrast = 31;
 % cam.Exposure = -4;
 % cam.Resolution='1920x1080';
@@ -24,54 +27,28 @@ img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGra
 
 % img_grid = grid_puzzle(built_puzzle_img,num_of_pieces);
 img_grid = imread(appGui.img);
-[seg_img,~] = segmentation(img_for_segmentation,1,1,0.7,40);
+[seg_img,~] = segmentation(img_for_segmentation,1,2,0.7,8);
 
 %imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
 
 
 % filt_size = 5, extent_const = 0.3
-imgCell_1 = cut_images(img_for_segmentation_rgb(:,:,1),seg_img,12,10);
-imgCell_2 = cut_images(img_for_segmentation_rgb(:,:,2),seg_img,12,10);
-imgCell_3 = cut_images(img_for_segmentation_rgb(:,:,3),seg_img,12,10);
-imgCell_4 = cut_images(img_for_segmentation,seg_img,12,10);
 
-for i = 1:10
-    piece_1 = imgCell_1{i};
-    piece_1 = imresize(piece_1,5);
-    figure
-    imshow(piece_1);
-    [location,reliability] = matching_features(piece_1,img_grid,num_row,num_col,1);
-    
-    fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
-        ,i,location(1),location(2),reliability);
+imgCell_1 = cut_images(img_for_segmentation_rgb,seg_img,15,10);
 
-    piece_2 = imgCell_2{i};
-    piece_2 = imresize(piece_2,5);
-    figure
-    imshow(piece_2);
-    [location,reliability] = matching_features(piece_2,img_grid,num_row,num_col,1);
-    
-    fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
-        ,i,location(1),location(2),reliability);
 
-    piece_3 = imgCell_3{i};
-    piece_3 = imresize(piece_3,5);
-    figure
-    imshow(piece_3);
-    [location,reliability] = matching_features(piece_3,img_grid,num_row,num_col,1);
-    
-    fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
-        ,i,location(1),location(2),reliability);
+for i = 1:15
+%     piece_1 = imgCell_1{i};
+%     piece_1 = imresize(piece_1,5);
+%     figure
+%     imshow(piece_1);
+%     [location,reliability] = matching_features(piece_1,img_grid,num_row,num_col,points2_flag,app);
+%     points2_flag = 0;
+%     
+%     fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
+%         ,i,location(1),location(2),reliability);
 
-    piece_4 = imgCell_4{i};
-    piece_4 = imresize(piece_4,5);
-    figure
-    imshow(piece_4);
-    [location,reliability] = matching_features(piece_4,img_grid,num_row,num_col,1);
-    
-    fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
-        ,i,location(1),location(2),reliability);
-    close all
+
 end
 close(f);
 
@@ -100,7 +77,7 @@ while(~flag_stop)
         temp = labled==label;
         [r,c]=find(labled==label);
         padding = 20;
-        temp2 = img_for_segmentation.*cast(temp,"like",img_for_segmentation);
+        temp2 = img_for_segmentation_rgb.*cast(temp,"like",img_for_segmentation_rgb);
         % add padding to the edges of the images
         r_low = max(min(r)-padding,1);
         r_high = min(max(r)+padding,size(temp,1));
@@ -118,8 +95,8 @@ while(~flag_stop)
     
         img_cut = imresize(img_cut,5);
         img_cut(img_cut==0) = -1;
-        [location,reliability] = matching_features(img_cut,img_grid,num_row,num_col,1);
-        
+        [location,reliability] = matching_features(img_cut,img_grid,num_row,num_col,points2_flag,app);
+        points2_flag = 1;
         
         fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
             ,i,location(1),location(2),reliability);
@@ -146,7 +123,7 @@ while(~flag_stop)
     img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
     
 
-    [seg_img,~] = segmentation(img_for_segmentation,1,1,0.7,40);
+    [seg_img,~] = segmentation(img_for_segmentation,1,2,0.7,8);
     %imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
 
     noise = noise_val(cam); % it's take 1sec. 
@@ -158,6 +135,7 @@ end
     %f = msgbox('The job is done');
     %pause(5)
     %delete(f);
+    msg = ['You can go to the sea'];
     uialert(appGui.UIFigure,msg,'The job is done','Icon','success');
 
 

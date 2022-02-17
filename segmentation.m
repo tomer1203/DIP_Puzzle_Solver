@@ -24,7 +24,7 @@ function [seg_img,puz_edges] = segmentation(img,dialtion_size1,dialation_size2,e
     % fill the shape edges to get a good segmentation
     mask = imfill(double(puz_edges),8,"holes");
     % possible to add erosion here
-    % mask = imerode(mask,strel("rectangle",[10,10]));
+    mask = imerode(mask,strel("rectangle",[dialation_size2+1,dialation_size2+1]));
 %     figure;
 %     imshow(mask);
 

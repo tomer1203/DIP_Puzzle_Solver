@@ -18,6 +18,9 @@ points2 = detectSURFFeatures(gray_grid,"MetricThreshold",MetricThreshold,"NumOct
 [f1,vpts1] = extractFeatures(pieces,points1,"Method","SURF");
 [f2,vpts2] = extractFeatures(gray_grid,points2,"Method","SURF");
 
+strongest = points1.selectStrongest(50);
+imshow(pieces); hold on;
+plot(strongest);hold off;
 
 indexPairs = matchFeatures(f1,f2,Unique=uniq,MatchThreshold=100);
 matchedPoints1 = vpts1(indexPairs(:,1));
@@ -37,6 +40,7 @@ legend(ax, 'Matched points piece','Matched points grid');
   % Find numner of features in each piece
 [n,m,~] = size(img_grid);
 features_piece = zeros(num_row,num_col);
+features_piece2 = zeros(num_row,num_col);
 orientation_diff_mat = zeros(num_row,num_col);
 y = [matchedPoints2.Location(:,1)]; %.*(num_row/n);
 x = [matchedPoints2.Location(:,2)]; %.*(num_col/m);
@@ -50,6 +54,7 @@ mask(pieces>0)=1;
 % normelize=max([(1-x_center_of_mass).^2+(1-y_center_of_mass).^2,(1-x_center_of_mass).^2+(size(piece,1)-y_center_of_mass).^2 ...
 %     (size(piece,2)-x_center_of_mass).^2+(1-y_center_of_mass).^2,(size(piece,2)-x_center_of_mass).^2+(size(piece,1)-y_center_of_mass).^2]);
 %%
+max_strength = max(matchedPoints2.Metric);
 for j = 1:num_row
     for k = 1:num_col
         y_range = (y >= (k-1)*(m/num_col)) & (y < k*(m/num_col));
@@ -67,7 +72,11 @@ for j = 1:num_row
         orientation_diff = abs(atan2(sin(f2p.Orientation-f1p.Orientation), cos(f2p.Orientation-f1p.Orientation)));
 %         disp(sum(y_range));
 %         disp(sum(x_range));
+        
+%         strengths = (2*f2p.Metric+3*max_strength)/(5*max_strength);
+        strengths = log10((f2p.Metric/max_strength)+0.3)+0.89;
         features_piece(j,k) = f2p.Count;
+        features_piece2(j,k) = sum(strengths);
         if (f2p.Count<=2)
             orientation_diff_mat(j,k)= -1;
         else
@@ -76,21 +85,32 @@ for j = 1:num_row
     end
 end
 orientation_diff_mat(orientation_diff_mat==-1) = max(max(orientation_diff_mat));
-normelized_matrix=sum(sum(features_piece./orientation_diff_mat));
+
+% The chance that the peice is in location i,j
 features_weights_mat = features_piece./sigmoid(orientation_diff_mat-0.2);
+features_weights_mat2 = features_piece2./sigmoid(orientation_diff_mat-0.2);
+% the sum 
+weights_sum=sum(sum(features_weights_mat));
+weights_sum2=sum(sum(features_weights_mat2));
 [maximum,index_tmp] = max(features_weights_mat(:));
-disp(orientation_diff_mat);
+[maximum2,index_tmp] = max(features_weights_mat2(:));
+% disp(orientation_diff_mat);
+features_piece
+features_piece2
 % Reliability calculation:
 % features ratio * (2/(1+e^(-x/3))-1), x = sum of features in image
-ratio_score = tanh(maximum/matchedPoints2.Count);
+% ratio_score = maximum/matchedPoints2.Count;
+ratio_score = maximum/weights_sum;
 count_score = (2/(1+exp(-matchedPoints2.Count/3))-1);
 % disp(ratio_score);
 % disp(count_score);
+ratio_score2=maximum2/weights_sum2;
 reliability = ratio_score*count_score;
-% ratio_score2=maximum/normelized_matrix;
-% count_score2 = (2/(1+exp(-matchedPoints2.Count/3))-1);
-% reliability = ratio_score2*count_score2;
-
+reliability2 = ratio_score2*count_score;
+rel_mat = count_score*features_weights_mat/weights_sum
+rel_mat2 = count_score*features_weights_mat2/weights_sum2
+reliability
+reliability2
 location = zeros(2,1);
 location(1) = fix(index_tmp/num_row)+1;
 location(2) = mod(index_tmp,num_row);

@@ -4,7 +4,6 @@ function solve_puzzle(num_of_pieces,num_row,num_col,cam,appGui)
 %cam = webcam(2); % camera on
 % preview(cam); % show camera output
 %closePreview(cam); 
-
 %% global vals
 global flag_stop
 global points2
@@ -12,7 +11,7 @@ points2 = 0;
 points2_flag = 0;
 %% camera adjustments
 % cam.Brightness = 120;
- cam.FocusMode   = 'manual';
+%  cam.FocusMode   = 'manual';
 % cam.Contrast = 31;
 % cam.Exposure = -4;
 % cam.Resolution='1920x1080';
@@ -95,7 +94,7 @@ while(~flag_stop)
     
         img_cut = imresize(img_cut,5);
         img_cut(img_cut==0) = -1;
-        [location,reliability] = matching_features(img_cut,img_grid,num_row,num_col,points2_flag,app);
+        [location,reliability,f2,vpts2] = matching_features(img_cut,img_grid,num_row,num_col,points2_flag,app,f2,vpts2);
         points2_flag = 1;
         
         fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
@@ -124,7 +123,7 @@ while(~flag_stop)
     
 
     [seg_img,~] = segmentation(img_for_segmentation,1,2,0.7,8);
-    %imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
+    imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
 
     noise = noise_val(cam); % it's take 1sec. 
     %delete(f);

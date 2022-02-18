@@ -38,8 +38,9 @@ if(points2_flag == 0)
 % points2_1 = detectSURFFeatures(gray_grid_1,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
 % points2_2 = detectSURFFeatures(gray_grid_2,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
 % points2_3 = detectSURFFeatures(gray_grid_3,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
-    points2_4 = SURFPoints();
-    points2_4 = detectSURFFeatures(gray_grid_4,MetricThreshold=MetricThreshold,NumOctaves=NumOctaves,NumScaleLevels=NumScaleLevels);
+    
+%     points2_4 = detectSURFFeatures(gray_grid_4,MetricThreshold=MetricThreshold,NumOctaves=NumOctaves,NumScaleLevels=NumScaleLevels);
+    points2_4 = detectSIFTFeatures(gray_grid_4,Sigma=1.2);
 
 % points2 = [points2_1;points2_2;points2_3;points2_4];%RGB+GRAY
 % points2 = [points2_1;points2_2;points2_3]; %LAB
@@ -47,7 +48,7 @@ if(points2_flag == 0)
 %     [f2a,vpts2a] = extractFeatures(gray_grid_1,points2_1,"Method","SURF");
 %     [f2b,vpts2b] = extractFeatures(gray_grid_2,points2_2,"Method","SURF");
 %     [f2c,vpts2c] = extractFeatures(gray_grid_3,points2_3,"Method","SURF");
-    [f2d,vpts2d] = extractFeatures(gray_grid_4,points2_4,"Method","SURF");
+    [f2d,vpts2d] = extractFeatures(gray_grid_4,points2_4,"Method","SIFT");
 %     f2 = [f2a;f2b;f2c;f2d];
 %     vpts2 = [vpts2a;vpts2b;vpts2c;vpts2d];
     f2 = [f2d];
@@ -78,8 +79,8 @@ piece_4 = (piece_4 - min(piece_4(:)))/(max(piece_4(:)) - min(piece_4(:)));
 % points1_2 = detectSURFFeatures(piece_2,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
 % points1_3 = detectSURFFeatures(piece_3,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
 tic;
-points1_4 = detectSURFFeatures(piece_4,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
-
+% points1_4 = detectSURFFeatures(piece_4,"MetricThreshold",MetricThreshold,"NumOctaves",NumOctaves,"NumScaleLevels",NumScaleLevels);
+points1_4 = detectSIFTFeatures(piece_4,Sigma=1.2);
 % points1 = [points1_1;points1_2;points1_3;points1_4]; % RGB+GRAY
 % points1 = [points1_1;points1_2;points1_3];             % LAB
 % points1 = [points1_4];                               % GRAY
@@ -88,7 +89,7 @@ points1_4 = detectSURFFeatures(piece_4,"MetricThreshold",MetricThreshold,"NumOct
 % [f1b,vpts1b] = extractFeatures(piece_2,points1_2,"Method","SURF");
 % [f1c,vpts1c] = extractFeatures(piece_3,points1_3,"Method","SURF");
 
-[f1d,vpts1d] = extractFeatures(piece_4,points1_4,"Method","SURF");
+[f1d,vpts1d] = extractFeatures(piece_4,points1_4,"Method","SIFT");
 
 % f1 = [f1a;f1b;f1c;f1d];
 % vpts1 = [vpts1a;vpts1b;vpts1c;vpts1d];

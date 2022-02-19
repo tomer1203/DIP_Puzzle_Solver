@@ -27,9 +27,16 @@ points2 = detectSURFFeatures(gray_grid,"MetricThreshold",MetricThreshold,"NumOct
 [f2,vpts2] = extractFeatures(gray_grid,points2,"Method","SURF");
 
 
+
+
 indexPairs = matchFeatures(f1,f2,Unique=uniq,MatchThreshold=MatchThreshold_parameter);
 matchedPoints1 = vpts1(indexPairs(:,1));
 matchedPoints2 = vpts2(indexPairs(:,2));
+
+% points_bin = clean_featurse(pieces,matchedPoints1.Location);
+% matchedPoints1 = matchedPoints1(points_bin);
+% matchedPoints2 = matchedPoints2(points_bin);
+
 
 % figure; ax = axes;
 if (app ~= 0)
@@ -48,8 +55,7 @@ features_piece = zeros(num_row,num_col);
 orientation_diff_mat = zeros(num_row,num_col);
 y = [matchedPoints2.Location(:,1)]; %.*(num_row/n);
 x = [matchedPoints2.Location(:,2)]; %.*(num_col/m);
-mask=zeros(size(pieces));
-mask(pieces>0)=1;
+
 %% center of mass
 % props = regionprops(true(size(piece)), piece, 'WeightedCentroid');
 % x_center_of_mass=props.WeightedCentroid(1);

@@ -2,7 +2,7 @@
 
 
 function [puzzel_shape loc_mat]=detect_pazzel_shape(pieces,image_factor_resize)
-loc_mat=zeros(4,1);                 %up,down,left,right
+loc_mat=zeros(4,1);                 %up,down,left,right 
 f=floor(50/8)*image_factor_resize;  % the window size
 show=false;
 

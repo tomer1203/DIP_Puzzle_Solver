@@ -7,6 +7,7 @@
 %        reliability_new of the piece
 function [location_new,reliability_new]= matching_features_by_roi(location_row_empty,location_col_empty,pieces,img_grid,num_row,num_col)
 app=false;
+[n,m,~] = size(img_grid);
 %find the empty locations:
 % number of problematic locaions:
 number_of_location=length(location_col_empty);
@@ -22,12 +23,13 @@ if(number_of_location~=0) % more empty location
         x=(k_col-1)*floor(m/num_col)+1;
         y=(j_row-1)*floor(n/num_row)+1;
         R_roi=[x y width height];
-        [A,relability_vec(i)]=matching_features(pieces,img_grid,num_row,num_col,app,R_roi);
-        [location_vec_x(i),location_vec_y(i)]=A;
+        [A,relability_vec(i)]=matching_features_surf(pieces,img_grid,num_row,num_col,app,R_roi);
+        location_vec_x(i)=A(1);
+        location_vec_y(i)=A(2);
         clear A;
     end
     reliability_new=max(relability_vec);
-    cordinate=find(relability_vec=reliability_new);
+    cordinate=find(relability_vec==reliability_new);
     location_new=zeros(2,1);
     location_new(1)=location_vec_x(cordinate);
     location_new(2)=location_vec_y(cordinate);

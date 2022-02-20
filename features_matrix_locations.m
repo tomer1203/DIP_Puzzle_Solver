@@ -2,11 +2,11 @@
 % sigments_values=[dialtion_size1 dialation_size2 extent_filter center_size]
 % img- the unsoved puzzels
 % resize_factor- recommend 8 
-function [location_matrix, reliability_matrix]=features_matrix_locations(img_grid,img,sigments_values,resize_factor,num_row,num_col,appGui)
-dialtion_size1=sigments_values(1);
-dialation_size2=sigments_values(2);
-extent_filter=sigments_values(3);
-center_size=sigments_values(4);
+function [location_matrix, reliability_matrix]=features_matrix_locations(img_grid,img,resize_factor,num_row,num_col,appGui)
+dialtion_size1=appGui.segParams.dial1;
+dialation_size2=appGui.segParams.dial2 ;
+extent_filter=appGui.segParams.ext_filt ;
+center_size=appGui.segParams.center_size;
 num_of_pieces=num_row*num_col;
 show=false;
 
@@ -19,12 +19,15 @@ figure()
 imshow(seg_img);
 % cut the image
 imgCell = cut_images(img,seg_img,num_of_pieces,10);
+
+
 %shape
 location_matrix_shape=cell(num_row,num_col);
 % features:
 location_matrix=cell(num_row,num_col);
 reliability_matrix=cell(num_row,num_col);
 %scan all the pieces
+fl=0;f2=0;vpts2=0;
 for i =1:num_of_pieces
     piece = imgCell{i};
     piece=imresize(piece,resize_factor);
@@ -34,7 +37,9 @@ for i =1:num_of_pieces
     end
     
     roi=0;
-    [location_features,reliability_features] = matching_features_surf(piece,img_grid,num_row,num_col,show,roi);
+%     [location_features,reliability_features] = matching_features_surf(piece,img_grid,num_row,num_col,show,roi);
+    [location_features,reliability_features,f2,vpts2] = matching_features(piece,img_grid,num_row,num_col,fl,appGui,f2,vpts2,roi);
+    fl=1;
     location_matrix{location_features(2),location_features(1)}=[location_matrix{location_features(2),location_features(1)},i];
     reliability_matrix{location_features(2),location_features(1)}=[reliability_matrix{location_features(2),location_features(1)},reliability_features];
 %     % shape...
@@ -65,7 +70,10 @@ if (~isempty(location_row_problem))
 %           for number of duplicate in the same location
 %               matthing feature by roi
 %               fix the reliability matrix
+
+%       for any location_problem
        for i=1:length(location_row_problem)
+%          find the most probblie piece in this location
            loc_problem_temp_row=location_row_problem(i);
            loc_problem_temp_col=location_col_problem(i);
            location_of_the_most_ralibility=find(reliability_matrix{loc_problem_temp_row,loc_problem_temp_col}==max(reliability_matrix{loc_problem_temp_row,loc_problem_temp_col}));

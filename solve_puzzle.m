@@ -34,12 +34,12 @@ img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGra
 
 img = snapshot(cam);
 img_grid = imread(appGui.img);
-num_of_pieces = 24;
-num_row = 4;
-num_col = 6;
-sigments_values = [1 2 0.6 20];
+% num_of_pieces = 24;
+% num_row = 4;
+% num_col = 6;
+% sigments_values = [1 2 0.6 20];
 resize_factor = 8;
-[location_matrix, reliability_matrix] = features_matrix_locations(img_grid,img,sigments_values,resize_factor,num_row,num_col,appGui);
+[location_matrix, reliability_matrix] = features_matrix_locations(img_grid,img,resize_factor,num_row,num_col,appGui);
 
 
 in_metrix = 1

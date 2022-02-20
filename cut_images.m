@@ -22,6 +22,11 @@ function imgCell = cut_images(img,mask,N,padding)
         mask_cut = temp(r_low:r_high,c_low:c_high);
         
         BWedge = edge(mask_cut,"prewitt");
+        if (isempty(BWedge))
+            disp("IS EMPTY!");
+            figure;
+            imshow(BWedge);
+        end
         [H,T,R] = hough(BWedge);
         peaks = houghpeaks(H,N*4);
         lines = houghlines(BWedge,T,R,peaks);

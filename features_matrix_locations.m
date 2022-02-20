@@ -66,10 +66,15 @@ if (~isempty(location_row_problem))
            loc_problem_temp_row=location_row_problem(i);
            loc_problem_temp_col=location_col_problem(i);
            location_of_the_most_ralibility=find(reliability_matrix{loc_problem_temp_row,loc_problem_temp_col}==max(reliability_matrix{loc_problem_temp_row,loc_problem_temp_col}));
+           temp_pieces=location_matrix{loc_problem_temp_row,loc_problem_temp_col}; %% all the pices as a vec *before* change!
+           location_matrix{loc_problem_temp_row,loc_problem_temp_col}=temp_pieces(location_of_the_most_ralibility); %put the most realibility in the location matrix
+%            find all the not most reliability and put them in temp_pieces as a vector
            temp_pieces_loc=find(reliability_matrix{loc_problem_temp_row,loc_problem_temp_col}<max(reliability_matrix{loc_problem_temp_row,loc_problem_temp_col}));
-           temp_pieces=location_matrix{loc_problem_temp_row,loc_problem_temp_col}(temp_pieces_loc);
-           location_matrix{loc_problem_temp_row,loc_problem_temp_col}=temp_pieces(location_of_the_most_ralibility);
+           temp_pieces=temp_pieces(temp_pieces_loc);
+%            modify the reliability_matrix
            reliability_matrix{loc_problem_temp_row,loc_problem_temp_col}=max(reliability_matrix{loc_problem_temp_row,loc_problem_temp_col});
+
+           
            for j=1:length(temp_pieces_loc)
                piece=imgCell{temp_pieces(j)};
                piece=imresize(piece,resize_factor);
@@ -108,5 +113,6 @@ if(length(location_row_problem)==1)
     reliability_matrix{location_row_empty,location_col_empty}=temp_reliability;
 end
 
-
+reliability_matrix=cell2mat(reliability_matrix);
+location_matrix=cell2mat(location_matrix);
 end

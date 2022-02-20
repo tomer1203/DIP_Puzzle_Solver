@@ -1,6 +1,6 @@
 function points_bin = clean_featurse(pieces,featurse)
 pieces_bin = pieces > 0.05;
-pieces_fil = imboxfilt(double(pieces_bin),51);
+pieces_fil = imboxfilt(double(pieces_bin),61);
 pieces_bin = pieces_fil > 0.9 ;
 % figure()
 % imshow(pieces_bin)

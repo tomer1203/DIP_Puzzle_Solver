@@ -2,7 +2,7 @@
 % sigments_values=[dialtion_size1 dialation_size2 extent_filter center_size]
 % img- the unsoved puzzels
 % resize_factor- recommend 8 
-function [location_matrix, reliability_matrix]=features_matrix_locations(img_grid,img,sigments_values,resize_factor,num_row,num_col)
+function [location_matrix, reliability_matrix]=features_matrix_locations(img_grid,img,sigments_values,resize_factor,num_row,num_col,appGui)
 dialtion_size1=sigments_values(1);
 dialation_size2=sigments_values(2);
 extent_filter=sigments_values(3);
@@ -13,7 +13,10 @@ show=false;
 % segmenttion
 gray_img= double(im2gray(img));
 gray_img = (gray_img- min(gray_img(:)))/(max(gray_img(:)) - min(gray_img(:)));
-[seg_img,puz_edges] = segmentation(gray_img,dialtion_size1,dialation_size2,extent_filter,center_size);
+%[seg_img,puz_edges] = segmentation(gray_img,dialtion_size1,dialation_size2,extent_filter,center_size);
+[seg_img,puz_edges] = segmentation(gray_img,appGui.segParams.dial1,appGui.segParams.dial2,appGui.segParams.ext_filt,appGui.segParams.center_size);
+figure()
+imshow(seg_img);
 % cut the image
 imgCell = cut_images(img,seg_img,num_of_pieces,10);
 %shape

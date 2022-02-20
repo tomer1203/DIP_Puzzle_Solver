@@ -9,6 +9,8 @@ global flag_stop
 global points2
 points2 = 0;
 points2_flag = 0;
+f2 = 0;
+vpts2 = 0;
 %% camera adjustments
 % cam.Brightness = 120;
 %  cam.FocusMode   = 'manual';
@@ -24,31 +26,46 @@ img_for_segmentation_rgb = snapshot(cam); %RGB
 ImgGray = double(rgb2gray(img_for_segmentation_rgb));
 img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
 
+
 % img_grid = grid_puzzle(built_puzzle_img,num_of_pieces);
-img_grid = imread(appGui.img);
+
 [seg_img,~] = segmentation(img_for_segmentation,1,2,0.7,8);
+
+
+img = snapshot(cam);
+img_grid = imread(appGui.img);
+num_of_pieces = 24;
+num_row = 4;
+num_col = 6;
+sigments_values = [1 2 0.6 20];
+resize_factor = 8;
+[location_matrix, reliability_matrix] = features_matrix_locations(img_grid,img,sigments_values,resize_factor,num_row,num_col,appGui);
+
+
+in_metrix = 1
+%out_metrix = next_pieces(seg_img,in_metrix);
 
 %imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
 
 
 % filt_size = 5, extent_const = 0.3
 
-imgCell_1 = cut_images(img_for_segmentation_rgb,seg_img,15,10);
+imgCell_1 = cut_images(img_for_segmentation_rgb,seg_img,24,10);
 
 
-for i = 1:15
+% for i = 1:24
 %     piece_1 = imgCell_1{i};
-%     piece_1 = imresize(piece_1,5);
-%     figure
-%     imshow(piece_1);
-%     [location,reliability] = matching_features(piece_1,img_grid,num_row,num_col,points2_flag,app);
+%     piece_1 = imresize(piece_1,8);
+%   
+% 
+%     [location,reliability,f2,vpts2] = matching_features(piece_1,img_grid,num_row,num_col,points2_flag,0,f2,vpts2);
 %     points2_flag = 0;
 %     
 %     fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
 %         ,i,location(1),location(2),reliability);
-
-
-end
+% 
+% close all
+% end
 close(f);
 
 i = 1;
@@ -65,6 +82,7 @@ while(~flag_stop)
          appGui.Label.Text = 'Choose puzzle piece again';
          tuch_point = found_tach_point2(cam,noise);
     end
+
     centroids = center_of_mass(seg_img,[11,11],tuch_point,appGui);
     labled = bwlabel(bwareafilt(logical(seg_img),[500,999999]));
     label = labled(floor(centroids(2)),floor(centroids(1)));
@@ -92,7 +110,7 @@ while(~flag_stop)
     %     close(f);
         
     
-        img_cut = imresize(img_cut,5);
+        img_cut = imresize(img_cut,8);
         img_cut(img_cut==0) = -1;
         [location,reliability,f2,vpts2] = matching_features(img_cut,img_grid,num_row,num_col,points2_flag,app,f2,vpts2);
         points2_flag = 1;
@@ -123,7 +141,7 @@ while(~flag_stop)
     
 
     [seg_img,~] = segmentation(img_for_segmentation,1,2,0.7,8);
-    imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
+    %imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
 
     noise = noise_val(cam); % it's take 1sec. 
     %delete(f);

@@ -1,4 +1,4 @@
-function tuch_point = found_tach_point(cam,noise)
+function tuch_point = found_tach_point(cam)
 tuch_point =0;
 img = {};
 summ = 0;

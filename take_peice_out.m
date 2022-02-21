@@ -1,4 +1,4 @@
-function  take_peice_out(cam,noise)
+function  take_peice_out(cam)
 
 flag = 0;
 count = 0;

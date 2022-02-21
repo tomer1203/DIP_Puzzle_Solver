@@ -44,6 +44,5 @@ function [seg_img,puz_edges] = segmentation(img,dialtion_size1,dialation_size2,e
     Ld2 = watershed(D2);
     seg_img = mask;
     seg_img(Ld2 == 0) = 0;
-%     figure;
-%     imshow(seg_img);
+
 end

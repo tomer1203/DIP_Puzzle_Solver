@@ -58,6 +58,12 @@ roi_4=[x4,y4,width,height];
 
 
 Q1=detectHarrisFeatures(BW,'MinQuality',minQuality,"FilterSize",filterSize,"ROI",roi_1);
+if(Q1.Count==0)
+    x1=size(mask,2)-1.5*width;
+    y1=1;
+    roi_1=[x1,y1,1.5*width,height];
+    Q1=detectHarrisFeatures(BW,'MinQuality',minQuality,"FilterSize",filterSize,"ROI",roi_1);
+end
 Q2=detectHarrisFeatures(BW,'MinQuality',minQuality,"FilterSize",filterSize,"ROI",roi_2);
 Q3=detectHarrisFeatures(BW,'MinQuality',minQuality,"FilterSize",filterSize,"ROI",roi_3);
 Q4=detectHarrisFeatures(BW,'MinQuality',minQuality,"FilterSize",filterSize,"ROI",roi_4);

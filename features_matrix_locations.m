@@ -2,52 +2,38 @@
 % sigments_values=[dialtion_size1 dialation_size2 extent_filter center_size]
 % img- the unsoved puzzels
 % resize_factor- recommend 8 
-function [location_matrix, reliability_matrix]=features_matrix_locations(img_grid,img,resize_factor,num_row,num_col,appGui)
-dialtion_size1=appGui.segParams.dial1;
-dialation_size2=appGui.segParams.dial2 ;
-extent_filter=appGui.segParams.ext_filt ;
-center_size=appGui.segParams.center_size;
+function [location_matrix, reliability_matrix]=features_matrix_locations(img_grid,img,resize_factor,num_row,num_col,app,imgCell)
+% dialtion_size1=appGui.segParams.dial1;
+% dialation_size2=appGui.segParams.dial2 ;
+% extent_filter=appGui.segParams.ext_filt ;
+% center_size=appGui.segParams.center_size;
 num_of_pieces=num_row*num_col;
 show=false;
 
-% segmenttion
-gray_img= double(im2gray(img));
-gray_img = (gray_img- min(gray_img(:)))/(max(gray_img(:)) - min(gray_img(:)));
-%[seg_img,puz_edges] = segmentation(gray_img,dialtion_size1,dialation_size2,extent_filter,center_size);
-[seg_img,puz_edges] = segmentation(gray_img,appGui.segParams.dial1,appGui.segParams.dial2,appGui.segParams.ext_filt,appGui.segParams.center_size);
-figure()
-imshow(seg_img);
-% cut the image
-imgCell = cut_images(img,seg_img,num_of_pieces,10);
-
-
-%shape
-location_matrix_shape=cell(num_row,num_col);
 % features:
 location_matrix=cell(num_row,num_col);
 reliability_matrix=cell(num_row,num_col);
 %scan all the pieces
-fl=0;f2=0;vpts2=0;
+ %extruct the features from the grid
+ piece=imgCell{1}; points2_flag=0;f2=0;vpts2=0;R_roi=0;
+ [~,~,f2,vpts2]=matching_features(piece,img_grid,num_row,num_col,points2_flag,app,f2,vpts2,R_roi);
+%scan all the pieces and match to the correct cordinatte
 for i =1:num_of_pieces
     piece = imgCell{i};
     piece=imresize(piece,resize_factor);
     if (show)
         figure
         imshow(piece)
-    end
-    
-    roi=0;
-%     [location_features,reliability_features] = matching_features_surf(piece,img_grid,num_row,num_col,show,roi);
-    [location_features,reliability_features,f2,vpts2] = matching_features(piece,img_grid,num_row,num_col,fl,appGui,f2,vpts2,roi);
-    fl=1;
+    end    
+    points2_flag=1;R_roi=0;
+    [location_features,reliability_features,~,~] =matching_features(piece,img_grid,num_row,num_col,points2_flag,app,f2,vpts2,R_roi); %###
     location_matrix{location_features(2),location_features(1)}=[location_matrix{location_features(2),location_features(1)},i];
     reliability_matrix{location_features(2),location_features(1)}=[reliability_matrix{location_features(2),location_features(1)},reliability_features];
-%     % shape...
-%     [puzzel_shape loc_mat]=detect_pazzel_shape(piece,resize_factor);
-%     location_matrix_shape{location_features(2),location_features(1)}=[location_matrix_shape{location_features(2),location_features(1)},puzzel_shape];
-%    
+   
 end
-
+disp("locatuin and reliability before manege locations:")
+location_matrix
+reliability_matrix
 % find if there any empty cells:
 B = location_matrix;
 B(cellfun(@isempty, B)) = {-1}; 
@@ -90,11 +76,15 @@ if (~isempty(location_row_problem))
                piece=imgCell{temp_pieces(j)};
                piece=imresize(piece,resize_factor);
 
-               [location_new,reliability_new]= matching_features_by_roi(location_row_empty,location_col_empty,piece,img_grid,num_row,num_col);
+               [location_new,reliability_new]= matching_features_by_roi(location_row_empty,location_col_empty,piece,img_grid,num_row,num_col,app);
                loc_1=location_new(1);
                loc_2=location_new(2);
                location_matrix{loc_2,loc_1}=[location_matrix{loc_2,loc_1},temp_pieces(j)];
                reliability_matrix{loc_2,loc_1}=[reliability_matrix{loc_2,loc_1},reliability_new];
+                %print visuzl matrix 
+                j+1
+                location_matrix
+                reliability_matrix
                % find if there any empty cells:
                B = location_matrix;
                B(cellfun(@isempty, B)) = {-1}; 

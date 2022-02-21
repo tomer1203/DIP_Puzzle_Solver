@@ -27,6 +27,7 @@ ImgGray = double(rgb2gray(img_for_segmentation_rgb));
 img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
 
 
+
 % img_grid = grid_puzzle(built_puzzle_img,num_of_pieces);
 
 [seg_img,~] = segmentation(img_for_segmentation,1,2,0.7,8);
@@ -49,10 +50,16 @@ in_metrix = 1
 
 
 % filt_size = 5, extent_const = 0.3
-
-imgCell_1 = cut_images(img_for_segmentation_rgb,seg_img,24,10);
-
-
+Cell_features = {};
+Cell_vpts = {};
+imgCell = cut_images(img_for_segmentation_rgb,seg_img,24,10);
+imgCell = imgCell(:,1);
+num_of_imgs = size(imgCell);
+for i = 1:num_of_imgs(1)
+    [features,vpts] = pull_features(imgCell{i},true,false,true);
+    Cell_features{i} = features;
+    Cell_vpts{i} = vpts;
+end
 % for i = 1:24
 %     piece_1 = imgCell_1{i};
 %     piece_1 = imresize(piece_1,8);

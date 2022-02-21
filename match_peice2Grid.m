@@ -3,7 +3,6 @@ function [location,reliability]=match_peice2Grid(piece,img_grid,num_row,num_col,
     show=false;
     show1=false;
     pieceGray = im2gray(piece);
-    img_gridGray = im2gray(img_grid);
     indexPairs = matchFeatures(f1,f2,Unique=uniq,MatchThreshold=100);
     matchedPoints1 = vpts1(indexPairs(:,1));
     matchedPoints2 = vpts2(indexPairs(:,2));
@@ -72,7 +71,7 @@ function [location,reliability]=match_peice2Grid(piece,img_grid,num_row,num_col,
     %         disp(sum(x_range));
             strengths = log10((f2p.Metric/max_strength)+0.3)+0.89;
     
-            features_piece(j,k) = f2p.Count;
+%             features_piece(j,k) = f2p.Count;
             features_piece2(j,k) = sum(strengths);
     
     
@@ -85,42 +84,10 @@ function [location,reliability]=match_peice2Grid(piece,img_grid,num_row,num_col,
             end
         end
     end
-    orientation_diff_mat(orientation_diff_mat==-1) = max(max(orientation_diff_mat));
-    scale_diff_mat(scale_diff_mat==-1)             = max(max(scale_diff_mat));
-    % The chance that the peice is in location i,j
-    features_weights_mat = features_piece./(sigmoid(scale_diff_mat-0.5).*sigmoid(orientation_diff_mat-0.5));
-    % features_weights_mat = features_piece./sigmoid(orientation_diff_mat-0.5);
-    features_weights_mat2 = features_piece2./(sigmoid(scale_diff_mat-0.5).*sigmoid(orientation_diff_mat-0.5));
-    % features_weights_mat2 = features_piece2./sigmoid(orientation_diff_mat-0.5);
-    % the sum 
-    weights_sum=sum(sum(features_weights_mat));
-    weights_sum2=sum(sum(features_weights_mat2));
-    [maximum,index_tmp] = max(features_weights_mat(:));
-    [maximum2,index_tmp2] = max(features_weights_mat2(:));
-    % disp(orientation_diff_mat);
-    % orientation_diff_mat
-    % scale_diff_mat
-    % features_piece
-    % features_piece2
-    % Reliability calculation:
-    % features ratio * (2/(1+e^(-x/3))-1), x = sum of features in image
-    % ratio_score = maximum/matchedPoints2.Count;
-    ratio_score = maximum/weights_sum;
-    count_score = (2/(1+exp(-matchedPoints2.Count/3))-1);
-    % disp(ratio_score);
-    % disp(count_score);
-    ratio_score2=maximum2/weights_sum2;
-    reliability = ratio_score*count_score;
-    reliability2 = ratio_score2*count_score;
-    
-    %to use strength matching
-    reliability = reliability2;
-    index_tmp = index_tmp2;
-    
-    % rel_mat = count_score*features_weights_mat/weights_sum
-    % rel_mat2 = count_score*features_weights_mat2/weights_sum2
-    % reliability
-    % reliability2
+
+    % looks at all the gathered data and chooses the best match
+    [index_tmp,reliability]=find_best_location(features_piece2,orientation_diff_mat,scale_diff_mat,matchedPoints2.Count);
+    % calculate location
     location = zeros(2,1);
     location(1) = fix(index_tmp/num_row)+1;
     location(2) = mod(index_tmp,num_row);

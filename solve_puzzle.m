@@ -39,7 +39,7 @@ img_grid = imread(appGui.img);
 % num_col = 6;
 % sigments_values = [1 2 0.6 20];
 resize_factor = 8;
-[location_matrix, reliability_matrix] = features_matrix_locations(img_grid,img,resize_factor,num_row,num_col,appGui);
+%[location_matrix, reliability_matrix] = features_matrix_locations(img_grid,img,resize_factor,num_row,num_col,appGui);
 
 
 in_metrix = 1
@@ -71,16 +71,16 @@ close(f);
 i = 1;
 %% real time
 while(~flag_stop)
-    close all    
-
+    %tic 
+    %timerVal = tic
     appGui.Label.Text = 'Choose puzzle piece';
     appGui.Label.Visible = 'on';
 %     f = uiconfirm(fig,'Choose puzzle piece','Proccesing','Icon','info');
     tuch_point = 0;
-    tuch_point = found_tach_point2(cam,noise);
+    tuch_point = found_tach_point2(cam);
     while(tuch_point == 0)         
          appGui.Label.Text = 'Choose puzzle piece again';
-         tuch_point = found_tach_point2(cam,noise);
+         tuch_point = found_tach_point2(cam);
     end
 
     centroids = center_of_mass(seg_img,[11,11],tuch_point,appGui);
@@ -101,38 +101,36 @@ while(~flag_stop)
         c_low = max(min(c)-padding,1);
         c_high = min(max(c)+padding,size(temp,2));
         
-        img_cut=temp2(r_low:r_high,c_low:c_high,:);
-        % mask_cut = temp(r_low:r_high,c_low:c_high);
-        % figure;
-        % imshow(mask_cut);
+        img_cut = temp2(r_low:r_high,c_low:c_high,:); % The choosen peice 
+        figure;
+        imshow(img_cut);
         app.Label.Visible = 'off';
-    %     delete(f);
-    %     close(f);
-        
-    
+        % %%%%%% tomer part
+
+            
         img_cut = imresize(img_cut,8);
-        img_cut(img_cut==0) = -1;
-        [location,reliability,f2,vpts2] = matching_features(img_cut,img_grid,num_row,num_col,points2_flag,app,f2,vpts2);
-        points2_flag = 1;
+
         
-        fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
-            ,i,location(1),location(2),reliability);
-        textPrint = sprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
-            ,i,location(1),location(2),reliability);
-        appGui.appSettings.CoordinateandRealibiltyLabel.Text = textPrint;
-    %     f = msgbox('Take out the choosen piece');
-        textLabel = sprintf("The location for the piece is (%d,%d). Take out " + ...
-            "the choosen piece",location(1),location(2));
-        appGui.Label.Text = textLabel;
+%         fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
+%             ,i,location(1),location(2),reliability);
+%         textPrint = sprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
+%             ,i,location(1),location(2),reliability);
+%         appGui.appSettings.CoordinateandRealibiltyLabel.Text = textPrint;
+%         textLabel = sprintf("The location for the piece is (%d,%d). Take out " + ...
+%             "the choosen piece",location(1),location(2));
+        appGui.Label.Text = 'Take out';
+
+        %appGui.Label.Text = textLabel;
         appGui.Label.Visible = 'on';
-        take_peice_out(cam,noise);
+        take_peice_out(cam);
         close all;
         num_of_pieces = num_of_pieces -1;
-    %     delete(f);
+
     
         if(num_of_pieces == 0)
             break; 
         end
+
     end
     % preprocessing again
     img_for_segmentation_rgb = snapshot(cam); %RGB
@@ -140,18 +138,14 @@ while(~flag_stop)
     img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
     
 
-    [seg_img,~] = segmentation(img_for_segmentation,1,2,0.7,8);
+    %[seg_img,~] = segmentation(img_for_segmentation,1,2,0.7,8);
     %imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
 
-    noise = noise_val(cam); % it's take 1sec. 
-    %delete(f);
+    %noise = noise_val(cam); % it's take 1sec. 
     i = i+1;
 end
 
-    
-    %f = msgbox('The job is done');
-    %pause(5)
-    %delete(f);
+  
     msg = ['You can go to the sea'];
     uialert(appGui.UIFigure,msg,'The job is done','Icon','success');
 

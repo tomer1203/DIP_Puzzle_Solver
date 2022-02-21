@@ -20,18 +20,18 @@ vpts2 = 0;
 %% pre prossing
 msg = ['please wait a few seconds'];
 f = uiprogressdlg(appGui.UIFigure,'Title','Proccesing','Message',msg,'Indeterminate','on');
-noise = noise_val(cam); % it's take 1sec.
 
+in_metrix = magic(5);
 img_for_segmentation_rgb = snapshot(cam); %RGB
 ImgGray = double(rgb2gray(img_for_segmentation_rgb));
 img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
 
-
+img_for_segmentation_rgb_copy = img_for_segmentation_rgb;
 
 % img_grid = grid_puzzle(built_puzzle_img,num_of_pieces);
 
 [seg_img,~] = segmentation(img_for_segmentation,1,2,0.7,8);
-
+seg_img_copy = seg_img;
 
 img = snapshot(cam);
 img_grid = imread(appGui.img);
@@ -42,8 +42,6 @@ img_grid = imread(appGui.img);
 resize_factor = 8;
 %[location_matrix, reliability_matrix] = features_matrix_locations(img_grid,img,resize_factor,num_row,num_col,appGui);
 
-
-in_metrix = 1
 %out_metrix = next_pieces(seg_img,in_metrix);
 
 %imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
@@ -91,6 +89,7 @@ while(~flag_stop)
     end
 
     centroids = center_of_mass(seg_img,[11,11],tuch_point,appGui);
+
     labled = bwlabel(bwareafilt(logical(seg_img),[500,999999]));
     label = labled(floor(centroids(2)),floor(centroids(1)));
     if (label == 0)
@@ -112,12 +111,12 @@ while(~flag_stop)
         figure;
         imshow(img_cut);
         app.Label.Visible = 'off';
-        % %%%%%% tomer part
-
-            
-        img_cut = imresize(img_cut,8);
-
         
+        img_cut = imresize(img_cut,8);
+        [label,reliability] = find_piece_label(img_cut,imgCell,Cell_features,Cell_vpts);
+        figure;
+        
+        imshow(imgCell{label});
 %         fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
 %             ,i,location(1),location(2),reliability);
 %         textPrint = sprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
@@ -150,6 +149,7 @@ while(~flag_stop)
 
     %noise = noise_val(cam); % it's take 1sec. 
     i = i+1;
+   % in_metrix = next_pieces(seg_img,in_metrix,centroids);
 end
 
   

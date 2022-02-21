@@ -54,15 +54,15 @@ summ = (summ /num_of_imgs > 0);
 filter_size = [25 25];
 %fun = @(x) ((sum(x(:),'all')) / (filter_size(1)*filter_size(2))) > 0.8;
 d_summ = double(summ);
-summed_fil = imboxfilt(double(d_summ),25);
+summed_fil = imboxfilt(double(d_summ),35);
 div_size = filter_size(1)*filter_size(2);
-summ = summed_fil > 0.8;
+summ = summed_fil > 0.85;
 
 % summ = nlfilter(summ,filter_size,fun);
-% figure;
-% imshow(summed_fil>0);
-% figure;
-% imshow(summ>0);
+figure;
+imshow(summed_fil>0);
+figure;
+imshow(summ>0);
 summ = medfilt2(summ,[5,5]);
 summ = summ>0;
 

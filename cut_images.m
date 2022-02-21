@@ -2,7 +2,7 @@
 % mask    = segmented image of the puzzle
 % N       = number of segmented pieces
 % padding = add black padding surrounding the images.
-function imgCell = cut_images(img,mask,N,padding)
+function [returnValue,imgCell] = cut_images(img,mask,N,padding,appGui)
     % label the areas and take only the N largest ones.
     labled = bwlabel(bwareafilt(logical(mask),N));
 %     imshow(bwareafilt(logical(img),N));
@@ -23,9 +23,14 @@ function imgCell = cut_images(img,mask,N,padding)
         
         BWedge = edge(mask_cut,"prewitt");
         if (isempty(BWedge))
-            disp("IS EMPTY!");
-            figure;
-            imshow(BWedge);
+            disp("hello world")
+            msg = ['Did not manage to find all the peices. make sure' ...
+                'you put all the peices on the board Retrying in 5 seconds'];
+            appGui.Label.Text = msg;
+            pause(5);
+%             uiconfirm(appGui.UIFigure,msg,'Check Peices','Icon','error');
+            returnValue = -1;
+            return;
         end
         [H,T,R] = hough(BWedge);
         peaks = houghpeaks(H,N*4);
@@ -50,6 +55,7 @@ function imgCell = cut_images(img,mask,N,padding)
             img_rot = img_cut;
         end
         imgCell{i} = img_rot;
+        returnValue = 1;
 %         subplot(5,3,i);
 %         imshow(imgCell{i});
 %         hold on

@@ -3,10 +3,7 @@
 % img- the unsoved puzzels
 % resize_factor- recommend 8 
 function [location_matrix, reliability_matrix]=features_matrix_locations(img_grid,img,resize_factor,num_row,num_col,app,imgCell)
-% dialtion_size1=appGui.segParams.dial1;
-% dialation_size2=appGui.segParams.dial2 ;
-% extent_filter=appGui.segParams.ext_filt ;
-% center_size=appGui.segParams.center_size;
+
 num_of_pieces=num_row*num_col;
 show=false;
 
@@ -114,6 +111,7 @@ if(length(location_row_problem)==1)
     reliability_matrix{location_row_empty,location_col_empty}=temp_reliability;
 end
 
+reliability_matrix(reliability_matrix==NaN)=0;
 reliability_matrix=cell2mat(reliability_matrix);
 location_matrix=cell2mat(location_matrix);
 end

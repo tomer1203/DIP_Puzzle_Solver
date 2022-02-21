@@ -3,7 +3,7 @@
 % vptsCell     = vpts organized by label
 function [label,reliability] = find_piece_label(piece,imgCell,featuresCell,vptsCell)
     grayScale = true;
-    show=false;
+    show=true;
     uniq=true;
     [f1,vpts1] = pull_features(piece,grayScale,0,true);
     N = size(imgCell,1);
@@ -21,12 +21,18 @@ function [label,reliability] = find_piece_label(piece,imgCell,featuresCell,vptsC
         indexPairs = matchFeatures(f1,f2,Unique=uniq,MatchThreshold=100);
         matchedPoints1 = vpts1(indexPairs(:,1));
         matchedPoints2 = vpts2(indexPairs(:,2));
+        
+        % clean features near the edge
+        points_bin = clean_featurse(piece,matchedPoints1.Location);
+        matchedPoints1 = matchedPoints1(points_bin);
+        matchedPoints2 = matchedPoints2(points_bin);
+
         max_strength   = max(matchedPoints2.Metric);
         match_count = match_count + matchedPoints2.Count;
         
        
-        if(show)
-            % figure; ax = axes;
+        if(1== 0)
+            figure; ax = axes;
             % if (app ~= 0)
             %     ax = app.appSettings.UIAxesFeatures;
             % else

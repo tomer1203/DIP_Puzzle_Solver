@@ -14,7 +14,7 @@ while(1)
 finger_in_img = snapshot(cam);
 finger_in_img = double(rgb2gray(finger_in_img))/255;
 different = sum(abs(abs(finger_in_img - start_img)),'all');
-if( different > noise*2 )
+if( different > noise*1.75 )
     new_img = finger_in_img;
     while(1)
     num_of_imgs = num_of_imgs + 1;
@@ -51,10 +51,10 @@ summ = (summ /num_of_imgs > 0);
 % imshow(summ);
 
 
-filter_size = [25 25];
+filter_size = [31 31];
 %fun = @(x) ((sum(x(:),'all')) / (filter_size(1)*filter_size(2))) > 0.8;
 d_summ = double(summ);
-summed_fil = imboxfilt(double(d_summ),35);
+summed_fil = imboxfilt(double(d_summ),filter_size(1));
 div_size = filter_size(1)*filter_size(2);
 summ = summed_fil > 0.85;
 

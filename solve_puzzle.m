@@ -21,18 +21,31 @@ vpts2 = 0;
 msg = ['please wait a few seconds'];
 f = uiprogressdlg(appGui.UIFigure,'Title','Proccesing','Message',msg,'Indeterminate','on');
 
-in_metrix = magic(5);
+% in_metrix = magic(5);
 img_for_segmentation_rgb = snapshot(cam); %RGB
 ImgGray = double(rgb2gray(img_for_segmentation_rgb));
 img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
 
-img_for_segmentation_rgb_copy = img_for_segmentation_rgb;
+% img_for_segmentation_rgb_copy = img_for_segmentation_rgb;
 
 % img_grid = grid_puzzle(built_puzzle_img,num_of_pieces);
+% dialtion_size1=appGui.segParams.dial1;
+% dialation_size2=appGui.segParams.dial2 ;
+% extent_filter=appGui.segParams.ext_filt ;
+% center_size=appGui.segParams.center_size;
+returnValue = -1;
+while(returnValue == -1)
+    img_for_segmentation_rgb = snapshot(cam); %RGB
+    ImgGray = double(rgb2gray(img_for_segmentation_rgb));
+    img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
 
-[seg_img,~] = segmentation(img_for_segmentation,1,2,0.7,8);
-seg_img_copy = seg_img;
-
+    [seg_img,~] = segmentation(img_for_segmentation,appGui.segParams.dial1,appGui.segParams.dial2,appGui.segParams.ext_filt ,appGui.segParams.center_size);
+    figure;
+    imshow(seg_img);
+    [returnValue,imgCell] = cut_images(img_for_segmentation_rgb,seg_img,num_of_pieces,10,appGui);
+end
+figure;
+imshow(seg_img);
 img = snapshot(cam);
 img_grid = imread(appGui.img);
 % num_of_pieces = 24;
@@ -40,7 +53,7 @@ img_grid = imread(appGui.img);
 % num_col = 6;
 % sigments_values = [1 2 0.6 20];
 resize_factor = 8;
-%[location_matrix, reliability_matrix] = features_matrix_locations(img_grid,img,resize_factor,num_row,num_col,appGui);
+
 
 %out_metrix = next_pieces(seg_img,in_metrix);
 
@@ -50,14 +63,21 @@ resize_factor = 8;
 % filt_size = 5, extent_const = 0.3
 Cell_features = {};
 Cell_vpts = {};
-imgCell = cut_images(img_for_segmentation_rgb,seg_img,24,10);
+
 imgCell = imgCell(:,1);
+tic;
+[location_matrix, reliability_matrix] = features_matrix_locations(img_grid,img,resize_factor,num_row,num_col,appGui,imgCell);
+toc;
+in_metrix = location_matrix;
 num_of_imgs = size(imgCell);
+tic;
 for i = 1:num_of_imgs(1)
+    imgCell{i} = imresize(imgCell{i},resize_factor);
     [features,vpts] = pull_features(imgCell{i},true,false,true);
     Cell_features{i} = features;
     Cell_vpts{i} = vpts;
 end
+toc;
 % for i = 1:24
 %     piece_1 = imgCell_1{i};
 %     piece_1 = imresize(piece_1,8);
@@ -117,18 +137,20 @@ while(~flag_stop)
         figure;
         
         imshow(imgCell{label});
+        [x,y] = find(location_matrix == label);
+        
 %         fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
 %             ,i,location(1),location(2),reliability);
 %         textPrint = sprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
 %             ,i,location(1),location(2),reliability);
 %         appGui.appSettings.CoordinateandRealibiltyLabel.Text = textPrint;
-%         textLabel = sprintf("The location for the piece is (%d,%d). Take out " + ...
-%             "the choosen piece",location(1),location(2));
-        appGui.Label.Text = 'Take out';
+        textLabel = sprintf("The location for the piece is (%d,%d). Take out " + ...
+            "the choosen piece",y,x);
+        appGui.Label.Text = textLabel;
 
         %appGui.Label.Text = textLabel;
         appGui.Label.Visible = 'on';
-        take_peice_out(cam);
+        take_peice_out(cam,appGui,num_of_pieces);
         close all;
         num_of_pieces = num_of_pieces -1;
 
@@ -144,12 +166,12 @@ while(~flag_stop)
     img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
     
 
-    %[seg_img,~] = segmentation(img_for_segmentation,1,2,0.7,8);
     %imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
 
     %noise = noise_val(cam); % it's take 1sec. 
     i = i+1;
-   % in_metrix = next_pieces(seg_img,in_metrix,centroids);
+%    in_metrix = next_pieces(seg_img,in_metrix,centroids);
+   [seg_img,~] = segmentation(img_for_segmentation,appGui.segParams.dial1,appGui.segParams.dial2,appGui.segParams.ext_filt ,appGui.segParams.center_size);
 end
 
   

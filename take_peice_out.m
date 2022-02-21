@@ -15,7 +15,7 @@ new_img = snapshot(cam);
 new_img = double(rgb2gray(new_img))/255;
 different = sum(abs(abs(new_img - old_img)),'all');
 
-if( different > noise*2 )
+if( different > noise*1.75 )
     %new_img = finger_in_img;
     while(1);
     old_img = new_img;

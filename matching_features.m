@@ -12,4 +12,7 @@ function [location,reliability,f2,vpts2] = matching_features(piece,img_grid,num_
     tic;
     [f1,vpts1] = pull_features(piece,grayScale,0,true);
     [location,reliability]=match_peice2Grid(piece,img_grid,num_row,num_col,f1,f2,vpts1,vpts2,app);
+    if reliability==NaN
+        reliability=0;
+    end
 end

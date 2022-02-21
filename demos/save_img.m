@@ -4,4 +4,4 @@ preview(cam);
 img = snapshot(cam);
 % corrected_img =prespective_transformation(img);
 imshow(img);
-imwrite(img,"15_pzl_webcam_test.jpg");
+imwrite(img,"20_2.jpg");

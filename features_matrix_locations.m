@@ -111,7 +111,6 @@ if(length(location_row_problem)==1)
     reliability_matrix{location_row_empty,location_col_empty}=temp_reliability;
 end
 
-reliability_matrix(reliability_matrix==NaN)=0;
 reliability_matrix=cell2mat(reliability_matrix);
 location_matrix=cell2mat(location_matrix);
 end

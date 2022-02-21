@@ -6,11 +6,12 @@ function [label,reliability] = find_piece_label(piece,imgCell,featuresCell,vptsC
     show=false;
     uniq=true;
     [f1,vpts1] = pull_features(piece,grayScale,0,true);
-    N = size(imgCell);
+    N = size(imgCell,1);
+    disp(N);
     features_piece = zeros(N,1);
-    orientation_diff_mat = zeros(N,1);
+    orientation_diff_mat = zeros([N,1]);
     scale_diff_mat       = zeros(N,1);
-    
+    match_count = 0;
 
     for i=1:N
         f2    = featuresCell{i};
@@ -20,8 +21,8 @@ function [label,reliability] = find_piece_label(piece,imgCell,featuresCell,vptsC
         indexPairs = matchFeatures(f1,f2,Unique=uniq,MatchThreshold=100);
         matchedPoints1 = vpts1(indexPairs(:,1));
         matchedPoints2 = vpts2(indexPairs(:,2));
-        toc;
-        
+        max_strength   = max(matchedPoints2.Metric);
+        match_count = match_count + matchedPoints2.Count;
         
        
         if(show)

@@ -27,12 +27,13 @@ imgCell = cut_images(RGB,mask,1,10);
 
 
 
-I=imgCell{1};
-[x,y]=find_corner(I);
+figure;
+imshow(RGB);
+[x,y]=ginput(4);
 
-[N,M,~]=size(I);
+[N,M,~]=size(RGB);
 fixedPoints = [0 0; M 0; M N; 0 N];
 tform = fitgeotrans([x(1) y(1); x(2) y(2); x(3) y(3); x(4) y(4)],fixedPoints,'projective');
-convrt_img = imwarp(I,tform,'OutputView',imref2d(size(I)));
+convrt_img = imwarp(RGB,tform,'OutputView',imref2d(size(RGB)));
 convrt_img=flipdim(convrt_img,2);
 end

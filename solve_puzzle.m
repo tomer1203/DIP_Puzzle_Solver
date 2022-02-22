@@ -52,7 +52,7 @@ img_grid = imread(appGui.img);
 % num_row = 4;
 % num_col = 6;
 % sigments_values = [1 2 0.6 20];
-resize_factor = 8;
+resize_factor = appGui.segParams.resize_factor;
 
 
 %out_metrix = next_pieces(seg_img,in_metrix);

@@ -1,6 +1,6 @@
 function  take_peice_out(cam,appGui,Old_number_of_peices)
 
-% while(1)
+while(1)
     flag = 0;
     count = 0;
     count_fr = 0;
@@ -43,17 +43,16 @@ function  take_peice_out(cam,appGui,Old_number_of_peices)
         end
             
     end
-
-%         new_img = snapshot(cam);
-%         ImgGray = double(im2gray(new_img));
-%         new_img  = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
-%         [seg_img,~] = segmentation(new_img ,appGui.segParams.dial1,appGui.segParams.dial2,appGui.segParams.ext_filt ,appGui.segParams.center_size);
-%         largestBlob = bwareafilt(logical(seg_img), 1);
-%         largestArea = sum(largestBlob(:));
-%         area_filtered = bwpropfilt(logical(seg_img), 'area', [largestArea/2, largestArea]);
-%         [~,Number_of_lables]=bwlabel(area_filtered);
-%         if ((Number_of_lables<Old_number_of_peices)||(Old_number_of_peices==1))
-%             break;
-%         end
-%     end
+        new_img = snapshot(cam);
+        ImgGray = double(im2gray(new_img));
+        new_img  = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
+        [seg_img,~] = segmentation(new_img ,appGui.segParams.dial1,appGui.segParams.dial2,appGui.segParams.ext_filt ,appGui.segParams.center_size);
+        largestBlob = bwareafilt(logical(seg_img), 1);
+        largestArea = sum(largestBlob(:));
+        area_filtered = bwpropfilt(logical(seg_img), 'area', [largestArea/2, largestArea]);
+        [~,Number_of_lables]=bwlabel(area_filtered);
+        if ((Number_of_lables<Old_number_of_peices)||(Old_number_of_peices==1))
+            break;
+        end
+    end
 end

@@ -8,8 +8,8 @@ appGui.segParams.dial2=7;
 appGui.segParams.ext_filt=0.7;
 appGui.segParams.center_size=45;
 
-RGB=imread("img\temp_2\pzl_6_uncut.jpg");
-RGB=((rot90(RGB)));
+RGB=imread("img\temp_tests\9_ref.jpg");
+RGB=(((RGB)));
 convrt_img=prespective_transformation(RGB)
 
 %% puzzel 24:

@@ -1,5 +1,5 @@
-function [matchedPoints1,matchedPoints2]=get_matching_features(f1,f2,vpts1,vpts2,pieceGray,uniq,app)
-    show = false;
+function [matchedPoints1,matchedPoints2]=get_matching_features(f1,f2,vpts1,vpts2,pieceGray,uniq,app,piece,img_grid)
+    show = true;
     show1 = false;
     indexPairs = matchFeatures(f1,f2,Unique=uniq,MatchThreshold=100);
     matchedPoints1 = vpts1(indexPairs(:,1));
@@ -11,7 +11,7 @@ function [matchedPoints1,matchedPoints2]=get_matching_features(f1,f2,vpts1,vpts2
     
  
     if(show)
-        % figure; ax = axes;
+        figure; ax = axes;
         % if (app ~= 0)
         %     ax = app.appSettings.UIAxesFeatures;
         % else

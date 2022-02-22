@@ -7,6 +7,11 @@ appGui.segParams.dial1=2;
 appGui.segParams.dial2=7;
 appGui.segParams.ext_filt=0.7;
 appGui.segParams.center_size=45;
+
+RGB=imread("img\temp_2\pzl_6_uncut.jpg");
+RGB=((rot90(RGB)));
+convrt_img=prespective_transformation(RGB)
+
 %% puzzel 24:
 % img=imread("img\temp_tests\pzl_24_p2.jpg");%15_pzl_webcam_test.jpg
 % img_grid=imread("img\pzl_24_p3.jpg");% pzl_15_p3.jpg
@@ -66,7 +71,7 @@ tic
 
 toc
 disp(toc-tic+ "sec")
-
+show_all_matrix(location_matrix,imgCell,num_row,num_col,img_grid)
 location_matrix_shape=cell(num_row,num_col);
 for i =1:num_of_pieces
     piece = imgCell{i};

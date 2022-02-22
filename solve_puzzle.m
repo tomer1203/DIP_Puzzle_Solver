@@ -170,7 +170,7 @@ while(~flag_stop)
 
     %noise = noise_val(cam); % it's take 1sec. 
     i = i+1;
-%    in_metrix = next_pieces(seg_img,in_metrix,centroids);
+    %in_metrix = next_pieces(seg_img,in_metrix,centroids);
    [seg_img,~] = segmentation(img_for_segmentation,appGui.segParams.dial1,appGui.segParams.dial2,appGui.segParams.ext_filt ,appGui.segParams.center_size);
 end
 

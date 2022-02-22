@@ -13,11 +13,11 @@ centroids(1) = centroids_s(k,1);
 centroids(2) = centroids_s(k,2);
 
 %--- all points
-figure()
-imshow(seg_img)
-hold on
-plot(centroids(:,1),centroids(:,2),'b*')
-hold off
+% figure()
+% imshow(seg_img)
+% hold on
+% plot(centroids(:,1),centroids(:,2),'b*')
+% hold off
 
 % --- cousen point
 % figure()

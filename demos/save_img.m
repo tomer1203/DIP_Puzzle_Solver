@@ -5,4 +5,4 @@ pause(3);
 img = snapshot(cam);
 % corrected_img =prespective_transformation(img);
 imshow(img);
-imwrite(img,"4_ref.jpg");
+imwrite(img,"temp.jpg");

@@ -49,7 +49,9 @@ while(returnValue == -1)
     closePreview(cam);
 
 %     figure;
-    imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
+    if (size(appGui.appSettings) ~= 0)
+        imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
+    end
     [returnValue,imgCell] = cut_images(img_for_segmentation_rgb,seg_img,num_of_pieces,10,appGui);
 end
 
@@ -118,10 +120,10 @@ while(~flag_stop)
     appGui.Label.Text = 'Choose puzzle piece';
     appGui.Label.Visible = 'on';
 %     f = uiconfirm(fig,'Choose puzzle piece','Proccesing','Icon','info');
-    touch_point = found_tach_point2(cam);
+    touch_point = found_tach_point2(cam,appGui);
     while(touch_point == 0)         
          appGui.Label.Text = 'Choose puzzle piece again';
-         touch_point = found_tach_point2(cam);
+         touch_point = found_tach_point2(cam,appGui);
     end
 
     centroids = center_of_mass(seg_img,[11,11],touch_point,appGui);
@@ -162,19 +164,20 @@ while(~flag_stop)
         
         img_cut = imresize(img_cut,8);
         [label,reliability] = find_piece_label(img_cut,imgCell,Cell_features,Cell_vpts);
-        
-        imshow(imgCell{label},'Parent',appGui.appSettings.UIAxesPiece);
+        if (size(appGui.appSettings) ~= 0)
+%             imshow(imgCell{label},'Parent',appGui.appSettings.UIAxesPiece);
+        end
         [x,y] = find(location_matrix == label);
         
 %         fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
 %             ,i,location(1),location(2),reliability);
         textPrint = sprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
-            ,i,location(1),location(2),reliability);
+            ,i,y,x,reliability);
         appGui.appSettings.CoordinateandRealibiltyLabel.Text = textPrint;
         textLabel = sprintf("The location for the piece is (%d,%d). Take out " + ...
             "the choosen piece",y,x);
         appGui.Label.Text = textLabel;
-
+        pause(0.5);
         %appGui.Label.Text = textLabel;
         appGui.Label.Visible = 'on';
         take_peice_out(cam,appGui,num_of_pieces);

@@ -14,7 +14,8 @@ while(1)
 finger_in_img = snapshot(cam);
 finger_in_img = double(rgb2gray(finger_in_img))/255;
 different = sum(abs(abs(finger_in_img - start_img)),'all');
-if( different > noise*1.75 )
+% disp("waiting for movement");
+if( different > noise*1.5 )
     new_img = finger_in_img;
     while(1)
     num_of_imgs = num_of_imgs + 1;
@@ -24,7 +25,9 @@ if( different > noise*1.75 )
     new_img = double(rgb2gray(new_img))/255;
     mooving_pixel = abs(new_img - old_img);
     mooving_pixel_sum = sum(mooving_pixel,'all');
-    if(mooving_pixel_sum < noise)
+%     disp("waiting for movement to stop");
+    if(mooving_pixel_sum < 1.1*noise)
+%         disp("no movement");
         if(flag == 1), count = count +1; 
         else, flag = 1; end
     else, flag = 0; count =0; 
@@ -62,8 +65,9 @@ summ = summed_fil > 0.85;
 summ = medfilt2(summ,[5,5]);
 summ = summ>0;
 % figure;
-imshow(summ,'Parent',app.appSettings.UIAxesTouchPoint);
-
+if (size(app.appSettings) ~= 0)
+%     imshow(summ,'Parent',app.appSettings.UIAxesTouchPoint);
+end
 [m, ~] = size(summ);
 
 tresh = 1; %25

@@ -48,8 +48,8 @@ while(returnValue == -1)
     imshow(seg_img,'Parent',appGui.UIAxes);
     closePreview(cam);
 
-    figure;
-    imshow(seg_img);
+%     figure;
+    imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
     [returnValue,imgCell] = cut_images(img_for_segmentation_rgb,seg_img,num_of_pieces,10,appGui);
 end
 
@@ -156,15 +156,14 @@ while(~flag_stop)
         c_high = min(max(c)+padding,size(temp,2));
         
         img_cut = temp2(r_low:r_high,c_low:c_high,:); % The choosen peice 
-        figure;
-        imshow(img_cut);
+%         figure;
+%         imshow(img_cut);
         app.Label.Visible = 'off';
         
         img_cut = imresize(img_cut,8);
         [label,reliability] = find_piece_label(img_cut,imgCell,Cell_features,Cell_vpts);
-        figure;
         
-        imshow(imgCell{label});
+        imshow(imgCell{label},'Parent',appGui.appSettings.UIAxesPiece);
         [x,y] = find(location_matrix == label);
         
 %         fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...

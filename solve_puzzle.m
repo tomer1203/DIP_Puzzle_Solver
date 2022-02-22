@@ -39,7 +39,8 @@ while(returnValue == -1)
     ImgGray = double(rgb2gray(img_for_segmentation_rgb));
     img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
 
-    [seg_img,~] = segmentation(img_for_segmentation,appGui.segParams.dial1,appGui.segParams.dial2,appGui.segParams.ext_filt ,appGui.segParams.center_size);
+    [seg_img,~] = segmentation(img_for_segmentation,appGui.segParams.dial1, ...
+        appGui.segParams.dial2,appGui.segParams.ext_filt ,appGui.segParams.center_size);
     figure;
     imshow(seg_img);
     [returnValue,imgCell] = cut_images(img_for_segmentation_rgb,seg_img,num_of_pieces,10,appGui);
@@ -66,7 +67,8 @@ Cell_vpts = {};
 
 imgCell = imgCell(:,1);
 tic;
-[location_matrix, reliability_matrix] = features_matrix_locations(img_grid,img,resize_factor,num_row,num_col,appGui,imgCell);
+[location_matrix, reliability_matrix] = features_matrix_locations(img_grid, ...
+    img,resize_factor,num_row,num_col,appGui,imgCell);
 toc;
 in_metrix = location_matrix;
 num_of_imgs = size(imgCell);
@@ -101,14 +103,13 @@ while(~flag_stop)
     appGui.Label.Text = 'Choose puzzle piece';
     appGui.Label.Visible = 'on';
 %     f = uiconfirm(fig,'Choose puzzle piece','Proccesing','Icon','info');
-    tuch_point = 0;
-    tuch_point = found_tach_point2(cam);
-    while(tuch_point == 0)         
+    touch_point = found_tach_point2(cam);
+    while(touch_point == 0)         
          appGui.Label.Text = 'Choose puzzle piece again';
-         tuch_point = found_tach_point2(cam);
+         touch_point = found_tach_point2(cam);
     end
 
-    centroids = center_of_mass(seg_img,[11,11],tuch_point,appGui);
+    centroids = center_of_mass(seg_img,[11,11],touch_point,appGui);
 
     labled = bwlabel(bwareafilt(logical(seg_img),[500,999999]));
     label = labled(floor(centroids(2)),floor(centroids(1)));
@@ -141,9 +142,9 @@ while(~flag_stop)
         
 %         fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
 %             ,i,location(1),location(2),reliability);
-%         textPrint = sprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
-%             ,i,location(1),location(2),reliability);
-%         appGui.appSettings.CoordinateandRealibiltyLabel.Text = textPrint;
+        textPrint = sprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
+            ,i,location(1),location(2),reliability);
+        appGui.appSettings.CoordinateandRealibiltyLabel.Text = textPrint;
         textLabel = sprintf("The location for the piece is (%d,%d). Take out " + ...
             "the choosen piece",y,x);
         appGui.Label.Text = textLabel;
@@ -171,7 +172,8 @@ while(~flag_stop)
     %noise = noise_val(cam); % it's take 1sec. 
     i = i+1;
     %in_metrix = next_pieces(seg_img,in_metrix,centroids);
-   [seg_img,~] = segmentation(img_for_segmentation,appGui.segParams.dial1,appGui.segParams.dial2,appGui.segParams.ext_filt ,appGui.segParams.center_size);
+   [seg_img,~] = segmentation(img_for_segmentation,appGui.segParams.dial1, ...
+       appGui.segParams.dial2,appGui.segParams.ext_filt ,appGui.segParams.center_size);
 end
 
   

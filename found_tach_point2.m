@@ -1,6 +1,6 @@
-function tuch_point = found_tach_point(cam)
+function tuch_point = found_tach_point2(cam,app)
 tuch_point =0;
-img = {};
+% img = {};
 summ = 0;
 count = 0;
 stuck = 0;
@@ -47,27 +47,24 @@ end
 end
 
 summ = (summ /num_of_imgs > 0);
-% figure()
-% imshow(summ);
-
 
 filter_size = [31 31];
 %fun = @(x) ((sum(x(:),'all')) / (filter_size(1)*filter_size(2))) > 0.8;
 d_summ = double(summ);
 summed_fil = imboxfilt(double(d_summ),filter_size(1));
-div_size = filter_size(1)*filter_size(2);
+% div_size = filter_size(1)*filter_size(2);
 summ = summed_fil > 0.85;
 
 % summ = nlfilter(summ,filter_size,fun);
-figure;
-imshow(summed_fil>0);
-figure;
-imshow(summ>0);
+% figure;
+% imshow(summed_fil>0);
+
 summ = medfilt2(summ,[5,5]);
 summ = summ>0;
+% figure;
+imshow(summ,'Parent',app.appSettings.UIAxesTouchPoint);
 
-
-[m, n] = size(summ);
+[m, ~] = size(summ);
 
 tresh = 1; %25
 % side(1) = sum(summ(tresh,:)); %up
@@ -75,8 +72,9 @@ tresh = 1; %25
 % side(3) = sum(summ(:,tresh)); %left
 % side(4) = sum(summ(:,n-tresh)); %right
 side = sum(summ(m-tresh,:)); %douwn
-if (side == 0)  return; end; 
-maxx = max(side);
+if (side == 0)  
+    return; end 
+% maxx = max(side);
 
 % if(side(1) == maxx)
 %     s = sum(summ(m-tresh,:));

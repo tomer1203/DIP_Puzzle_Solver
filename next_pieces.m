@@ -19,7 +19,7 @@ B = [0,1,0;1,0,1;0,1,0];
 A = memo < 0;
 A = A.*(-5);
 Cfull = conv2(A,B);
-Cfull = Cfull(2:m,2:n);
+Cfull = Cfull(2:m+1,2:n+1);
 next = find(Cfull < -4);
 labels = out_metrix(next);
 

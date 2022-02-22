@@ -100,7 +100,7 @@ end
 length_more_than_1=cellfun(@(x)length(x),B);
 [location_row_problem,location_col_problem] = find(length_more_than_1>1);
 if(length(location_row_problem)==1)
-    if(lenght(location_row_empty)~=1)
+    if(length(location_row_empty)~=1)
         disp("problem- the number of empty not fit")
     end
     temp=location_matrix{location_row_problem,location_col_problem}

@@ -1,7 +1,6 @@
 function [location,reliability]=match_peice2Grid(piece,img_grid,num_row,num_col,f1,f2,vpts1,vpts2,app)
     uniq=true;
-    show=false;
-    show1=false;
+
     pieceGray = im2gray(piece);
     % get the matching features
     [matchedPoints1,matchedPoints2]=get_matching_features(f1,f2,vpts1,vpts2,pieceGray,uniq,app,piece,img_grid);

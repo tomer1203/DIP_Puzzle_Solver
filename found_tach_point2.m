@@ -68,56 +68,56 @@ summ = summ>0;
 
 
 [m, n] = size(summ);
-% tresh = 26; %25
+
 tresh = 1; %25
-side(1) = sum(summ(tresh,:)); %up
-side(2) = sum(summ(m-tresh,:)); %douwn
-side(3) = sum(summ(:,tresh)); %left
-side(4) = sum(summ(:,n-tresh)); %right
+% side(1) = sum(summ(tresh,:)); %up
+% side(2) = sum(summ(m-tresh,:)); %douwn
+% side(3) = sum(summ(:,tresh)); %left
+% side(4) = sum(summ(:,n-tresh)); %right
+side = sum(summ(m-tresh,:)); %douwn
 if (side == 0)  return; end; 
 maxx = max(side);
 
-if(side(1) == maxx)
-    s = sum(summ(m-tresh,:));
-    while (s < 20 && tresh<(m-1))
-       disp(m-tresh);
-       s = sum(summ(m-tresh,:)); 
-       tresh = tresh+1;      
-    end
-    p = find(summ((m-tresh),:));
-    tuch_point = [(m-tresh) , p(1)];
-end
+% if(side(1) == maxx)
+%     s = sum(summ(m-tresh,:));
+%     while (s < 20 && tresh<(m-1))
+%        disp(m-tresh);
+%        s = sum(summ(m-tresh,:)); 
+%        tresh = tresh+1;      
+%     end
+%     p = find(summ((m-tresh),:));
+%     tuch_point = [(m-tresh) , p(1)];
+% end
 
-if(side(2) == maxx)
+% if(side(2) == maxx)
       s = sum(summ(tresh,:));
     while (s < 20 && tresh<(m-1))
-       disp(tresh);
        s = sum(summ(tresh,:)); 
        tresh = tresh+1;       
     end
     p = find(summ(tresh,:));
     tuch_point = [tresh , p(1)];
-end
+% end
 
-if(side(3) == maxx)
-      s = sum(summ(:,n-tresh));
-    while (s < 20 && tresh<(n-1))
-       s = sum(summ(:,n-tresh)); 
-       tresh = tresh+1;     
-    end
-    p = find(summ(:,n-tresh));
-    tuch_point = [p(1) ,n-tresh];
-end
+% if(side(3) == maxx)
+%       s = sum(summ(:,n-tresh));
+%     while (s < 20 && tresh<(n-1))
+%        s = sum(summ(:,n-tresh)); 
+%        tresh = tresh+1;     
+%     end
+%     p = find(summ(:,n-tresh));
+%     tuch_point = [p(1) ,n-tresh];
+% end
 
-if(side(4) == maxx)
-      s = sum(summ(:,tresh));
-    while (s < 20 && tresh<(n-1))
-       s = sum(summ(:,tresh)); 
-       tresh = tresh+1;       
-    end
-    p = find(summ(:,tresh));
-    tuch_point = [p(1) ,tresh];
-end
+% if(side(4) == maxx)
+%       s = sum(summ(:,tresh));
+%     while (s < 20 && tresh<(n-1))
+%        s = sum(summ(:,tresh)); 
+%        tresh = tresh+1;       
+%     end
+%     p = find(summ(:,tresh));
+%     tuch_point = [p(1) ,tresh];
+% end
 
 
 

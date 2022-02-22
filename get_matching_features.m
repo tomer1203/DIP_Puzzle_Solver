@@ -1,5 +1,5 @@
 function [matchedPoints1,matchedPoints2]=get_matching_features(f1,f2,vpts1,vpts2,pieceGray,uniq,app,piece,img_grid)
-    show = true;
+    show = false;
     show1 = false;
     indexPairs = matchFeatures(f1,f2,Unique=uniq,MatchThreshold=100);
     matchedPoints1 = vpts1(indexPairs(:,1));

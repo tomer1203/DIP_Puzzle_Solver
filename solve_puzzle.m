@@ -44,8 +44,8 @@ while(returnValue == -1)
     imshow(seg_img);
     [returnValue,imgCell] = cut_images(img_for_segmentation_rgb,seg_img,num_of_pieces,10,appGui);
 end
-figure;
-imshow(seg_img);
+% figure;
+% imshow(seg_img);
 img = snapshot(cam);
 img_grid = imread(appGui.img);
 % num_of_pieces = 24;

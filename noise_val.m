@@ -15,4 +15,4 @@ for i = 1:10
     summ = summ + noise1 + noise2;
 end
 noise = summ/20;
-end
+end 

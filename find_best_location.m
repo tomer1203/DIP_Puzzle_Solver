@@ -20,7 +20,7 @@ function [index_tmp,reliability]=find_best_location(features_piece2,orientation_
 %     ratio_score = maximum/weights_sum;
     count_score = (2/(1+exp(-match_count/3))-1);
 
-    ratio_score2=maximum2/weights_sum2;
+    ratio_score2=maximum2/(weights_sum2+eps);
 %     reliability = ratio_score*count_score;
     reliability2 = ratio_score2*count_score;
     

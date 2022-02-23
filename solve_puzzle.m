@@ -26,6 +26,8 @@ img_for_segmentation_rgb = snapshot(cam); %RGB
 ImgGray = double(rgb2gray(img_for_segmentation_rgb));
 img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
 
+
+
 % img_for_segmentation_rgb_copy = img_for_segmentation_rgb;
 
 % img_grid = grid_puzzle(built_puzzle_img,num_of_pieces);
@@ -36,23 +38,34 @@ img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGra
 returnValue = -1;
 while(returnValue == -1)
     img_for_segmentation_rgb = snapshot(cam); %RGB
+    
     ImgGray = double(rgb2gray(img_for_segmentation_rgb));
     img_for_segmentation = (ImgGray - min(ImgGray(:)))/(max(ImgGray(:)) - min(ImgGray(:)));
 
-    [seg_img,~] = segmentation(img_for_segmentation,appGui.segParams.dial1,appGui.segParams.dial2,appGui.segParams.ext_filt ,appGui.segParams.center_size);
-    figure;
-    imshow(seg_img);
+
+    [seg_img,~] = segmentation(img_for_segmentation,appGui.segParams.dial1, ...
+        appGui.segParams.dial2,appGui.segParams.ext_filt ,appGui.segParams.center_size);
+    imshow(seg_img,'Parent',appGui.UIAxes);
+    closePreview(cam);
+
+%     figure;
+    if (size(appGui.appSettings) ~= 0)
+        imshow(seg_img,'Parent',appGui.appSettings.UIAxesSeg);
+    end
     [returnValue,imgCell] = cut_images(img_for_segmentation_rgb,seg_img,num_of_pieces,10,appGui);
 end
-figure;
-imshow(seg_img);
+
 img = snapshot(cam);
+
+
+
+
 img_grid = imread(appGui.img);
 % num_of_pieces = 24;
 % num_row = 4;
 % num_col = 6;
 % sigments_values = [1 2 0.6 20];
-resize_factor = 8;
+resize_factor = appGui.segParams.resize_factor;
 
 
 %out_metrix = next_pieces(seg_img,in_metrix);
@@ -66,7 +79,8 @@ Cell_vpts = {};
 
 imgCell = imgCell(:,1);
 tic;
-[location_matrix, reliability_matrix] = features_matrix_locations(img_grid,img,resize_factor,num_row,num_col,appGui,imgCell);
+[location_matrix, reliability_matrix] = features_matrix_locations(img_grid, ...
+    img,resize_factor,num_row,num_col,appGui,imgCell);
 toc;
 in_metrix = location_matrix;
 num_of_imgs = size(imgCell);
@@ -96,19 +110,35 @@ close(f);
 i = 1;
 %% real time
 while(~flag_stop)
+    % go back to live video
+    im = image(appGui.UIAxes, zeros(size(img_for_segmentation_rgb),'uint8'));
+    axis(appGui.UIAxes,'image');
+    preview(cam,im);
+
     %tic 
     %timerVal = tic
     appGui.Label.Text = 'Choose puzzle piece';
     appGui.Label.Visible = 'on';
 %     f = uiconfirm(fig,'Choose puzzle piece','Proccesing','Icon','info');
-    tuch_point = 0;
-    tuch_point = found_tach_point2(cam);
-    while(tuch_point == 0)         
+    touch_point = found_tach_point2(cam,appGui);
+    while(touch_point == 0)         
          appGui.Label.Text = 'Choose puzzle piece again';
-         tuch_point = found_tach_point2(cam);
+         touch_point = found_tach_point2(cam,appGui);
     end
 
-    centroids = center_of_mass(seg_img,[11,11],tuch_point,appGui);
+    centroids = center_of_mass(seg_img,[11,11],touch_point,appGui);
+
+%     figure()
+    imshow(img_for_segmentation_rgb,'Parent',appGui.UIAxes);
+    hold(appGui.UIAxes,"on");
+    theta = 0 : 0.01 : 2*pi;
+    radius = 50;
+    x = radius * cos(theta) + centroids(1);
+    y = radius * sin(theta) + centroids(2);
+    plot(x', y', 'r-', 'LineWidth', 3,'Parent',appGui.UIAxes);
+    hold(appGui.UIAxes,"off");
+    closePreview(cam);
+
 
     labled = bwlabel(bwareafilt(logical(seg_img),[500,999999]));
     label = labled(floor(centroids(2)),floor(centroids(1)));
@@ -128,26 +158,26 @@ while(~flag_stop)
         c_high = min(max(c)+padding,size(temp,2));
         
         img_cut = temp2(r_low:r_high,c_low:c_high,:); % The choosen peice 
-        figure;
-        imshow(img_cut);
+%         figure;
+%         imshow(img_cut);
         app.Label.Visible = 'off';
         
         img_cut = imresize(img_cut,8);
         [label,reliability] = find_piece_label(img_cut,imgCell,Cell_features,Cell_vpts);
-        figure;
-        
-        imshow(imgCell{label});
+        if (size(appGui.appSettings) ~= 0)
+%             imshow(imgCell{label},'Parent',appGui.appSettings.UIAxesPiece);
+        end
         [x,y] = find(location_matrix == label);
         
 %         fprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
 %             ,i,location(1),location(2),reliability);
-%         textPrint = sprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
-%             ,i,location(1),location(2),reliability);
-%         appGui.appSettings.CoordinateandRealibiltyLabel.Text = textPrint;
+        textPrint = sprintf("The location for piece #%d is (%d,%d), reliability = %4f\n" ...
+            ,i,y,x,reliability);
+        appGui.appSettings.CoordinateandRealibiltyLabel.Text = textPrint;
         textLabel = sprintf("The location for the piece is (%d,%d). Take out " + ...
             "the choosen piece",y,x);
         appGui.Label.Text = textLabel;
-
+        pause(0.5);
         %appGui.Label.Text = textLabel;
         appGui.Label.Visible = 'on';
         take_peice_out(cam,appGui,num_of_pieces);
@@ -171,7 +201,8 @@ while(~flag_stop)
     %noise = noise_val(cam); % it's take 1sec. 
     i = i+1;
     %in_metrix = next_pieces(seg_img,in_metrix,centroids);
-   [seg_img,~] = segmentation(img_for_segmentation,appGui.segParams.dial1,appGui.segParams.dial2,appGui.segParams.ext_filt ,appGui.segParams.center_size);
+   [seg_img,~] = segmentation(img_for_segmentation,appGui.segParams.dial1, ...
+       appGui.segParams.dial2,appGui.segParams.ext_filt ,appGui.segParams.center_size);
 end
 
   

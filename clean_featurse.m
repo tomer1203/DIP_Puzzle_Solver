@@ -1,4 +1,6 @@
 function points_bin = clean_featurse(pieces,featurse)
+
+new_segment_value=61;
 pieces_bin = pieces > 0.05;
 pieces_fil = imboxfilt(double(pieces_bin),61);
 pieces_bin = pieces_fil > 0.9 ;

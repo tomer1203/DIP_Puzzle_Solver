@@ -121,10 +121,13 @@ while(~flag_stop)
     appGui.Label.Visible = 'on';
 %     f = uiconfirm(fig,'Choose puzzle piece','Proccesing','Icon','info');
     touch_point = found_tach_point2(cam,appGui);
+
     while(touch_point == 0)         
          appGui.Label.Text = 'Choose puzzle piece again';
          touch_point = found_tach_point2(cam,appGui);
     end
+    appGui.Label.Text = 'Proccessing...';
+    appGui.Label.Visible = 'on';
 
     centroids = center_of_mass(seg_img,[11,11],touch_point,appGui);
 
@@ -144,8 +147,8 @@ while(~flag_stop)
     label = labled(floor(centroids(2)),floor(centroids(1)));
     if (label == 0)
         textLabel = sprintf("Finding Label Failed Please Select a New peice");
-        app.Label.Text = textLabel;
-        app.Label.Visible = 'on';
+        appGui.Label.Text = textLabel;
+        appGui.Label.Visible = 'on';
     else
         temp = labled==label;
         [r,c]=find(labled==label);
@@ -160,10 +163,13 @@ while(~flag_stop)
         img_cut = temp2(r_low:r_high,c_low:c_high,:); % The choosen peice 
 %         figure;
 %         imshow(img_cut);
-        app.Label.Visible = 'off';
+%         appGui.Label.Visible = 'on';
         
         img_cut = imresize(img_cut,8);
+        disp("matching peice");
+        tic;
         [label,reliability] = find_piece_label(img_cut,imgCell,Cell_features,Cell_vpts);
+        toc;
         if (size(appGui.appSettings) ~= 0)
 %             imshow(imgCell{label},'Parent',appGui.appSettings.UIAxesPiece);
         end
@@ -177,11 +183,9 @@ while(~flag_stop)
         textLabel = sprintf("The location for the piece is (%d,%d). Take out " + ...
             "the choosen piece",y,x);
         appGui.Label.Text = textLabel;
-        pause(0.5);
         %appGui.Label.Text = textLabel;
         appGui.Label.Visible = 'on';
         take_peice_out(cam,appGui,num_of_pieces);
-        close all;
         num_of_pieces = num_of_pieces -1;
 
     

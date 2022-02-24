@@ -11,42 +11,50 @@ start_img = double(rgb2gray(start_img))/255;
 noise = noise_val(cam);
 pause(0.1)
 while(1)
-finger_in_img = snapshot(cam);
-finger_in_img = double(rgb2gray(finger_in_img))/255;
-different = sum(abs(abs(finger_in_img - start_img)),'all');
-% disp("waiting for movement");
-if( different > noise*1.5 )
-    new_img = finger_in_img;
-    while(1)
-    num_of_imgs = num_of_imgs + 1;
-    old_img = new_img;
-    pause(0.1)
-    new_img = snapshot(cam);
-    new_img = double(rgb2gray(new_img))/255;
-    mooving_pixel = abs(new_img - old_img);
-    mooving_pixel_sum = sum(mooving_pixel,'all');
-%     disp("waiting for movement to stop");
-    if(mooving_pixel_sum < 1.1*noise)
-%         disp("no movement");
-        if(flag == 1), count = count +1; 
-        else, flag = 1; end
-    else, flag = 0; count =0; 
+    finger_in_img = snapshot(cam);
+    finger_in_img = double(rgb2gray(finger_in_img))/255;
+    different = sum(abs(abs(finger_in_img - start_img)),'all');
+    disp("waiting for movement");
+    if( different > noise*1.5 )
+        new_img = finger_in_img;
+        while(1)
+            num_of_imgs = num_of_imgs + 1;
+            old_img = new_img;
+            pause(0.1)
+            new_img = snapshot(cam);
+            new_img = double(rgb2gray(new_img))/255;
+            mooving_pixel = abs(new_img - old_img);
+            mooving_pixel_sum = sum(mooving_pixel,'all');
+            disp("waiting for movement to stop");
+            if(mooving_pixel_sum < 1.3*noise)
+                disp("no movement");
+                if(flag == 1)
+                     count = count +1; 
+                else 
+                    flag = 1; 
+                end
+            else 
+                flag = 0; 
+                count =0; 
+            end
+            
+            if(count > 4)
+                break;
+            end
+        
+            stuck = stuck+1;
+            if (stuck == 20)
+                disp("recalculating noise");
+                noise = noise_val(cam);
+                stuck = 0;
+            end
+            
+        
+            mooving_pixel = (mooving_pixel>0.05);
+            summ = summ + mooving_pixel;
+        end
+        break;
     end
-    
-    if(count > 1), break; end
-
-    stuck = stuck+1;
-    if (stuck == 20)
-        noise = noise_val(cam);
-        stuck = 0;
-    end
-    
-
-    mooving_pixel = (mooving_pixel>0.05);
-    summ = summ + mooving_pixel;
-    end
-    break;
-end
 end
 
 summ = (summ /num_of_imgs > 0);
@@ -56,14 +64,19 @@ filter_size = [31 31];
 d_summ = double(summ);
 summed_fil = imboxfilt(double(d_summ),filter_size(1));
 % div_size = filter_size(1)*filter_size(2);
-summ = summed_fil > 0.85;
+summ = summed_fil > 0.8;% 0.85
 
 % summ = nlfilter(summ,filter_size,fun);
 % figure;
 % imshow(summed_fil>0);
 
 summ = medfilt2(summ,[5,5]);
+% figure;
+% imshow(summ);
 summ = summ>0;
+summ = bwareafilt(logical(summ), 1);% take out the largest shape
+% figure;
+% imshow(summ);
 % figure;
 if (size(app.appSettings) ~= 0)
 %     imshow(summ,'Parent',app.appSettings.UIAxesTouchPoint);
@@ -77,7 +90,8 @@ tresh = 1; %25
 % side(4) = sum(summ(:,n-tresh)); %right
 side = sum(summ(m-tresh,:)); %douwn
 if (side == 0)  
-    return; end 
+    return; 
+end 
 % maxx = max(side);
 
 % if(side(1) == maxx)

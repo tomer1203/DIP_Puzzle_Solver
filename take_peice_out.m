@@ -21,25 +21,28 @@ while(true)
             count_fr = 0;
             noise = noise_val(cam);
         end
-%         disp("waiting for movement");
+        disp("waiting for movement");
         if( different > noise*1.5 )
             count_fr = 0;
             %new_img = finger_in_img;
-            while(1);
+            while(1)
             old_img = new_img;
             pause(0.1)
             new_img = snapshot(cam);
             new_img = double(rgb2gray(new_img))/255;
             mooving_pixel = abs(new_img - old_img);
             mooving_pixel_sum = sum(mooving_pixel,'all');
-%             disp("waiting for movement to end");
+            disp("waiting for movement to end");
             if(mooving_pixel_sum < 1.1*noise )
-%                 disp("got no movement");
+                disp("got no movement");
                 if(flag == 1) count = count +1; 
-                else flag = 1; end;
-            else flag = 0; count =0; end;
+                else flag = 1;
+                end
+            else flag = 0; count =0; 
+            end
             
-            if(count > 1) break; end;
+            if(count > 1) break;
+            end
             
             count_fr = count_fr +1;
             if(count_fr > 20)
